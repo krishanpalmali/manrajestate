@@ -6,12 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build": "npm install && npm install --prefix \"vite project\" && npm run build --prefix \"vite project\""
+    "build": "npm install && npm install --prefix \"../vite project\" && npm run build --prefix \"../vite project\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",

@@ -39,12 +39,14 @@ app.use("/api/buy", buyRoute);
 app.use("/api/sell", sellRoute);
 app.use("/api/admin", adminRoute);
 
-// Frontend (Vite build)
-app.use(express.static(path.join(__dirname, "vite project", "dist")));
+// Frontend (Vite build folder)
+app.use(express.static(path.join(__dirname, "..", "vite project", "dist")));
 
 // Express 5 compatible catch-all
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "vite project", "dist", "index.html"));
+  res.sendFile(
+    path.join(__dirname, "..", "vite project", "dist", "index.html")
+  );
 });
 
 // Error middleware
