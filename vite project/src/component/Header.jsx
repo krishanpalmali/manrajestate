@@ -113,7 +113,7 @@ const Header = () => {
               onClick={() => setMenuOpen(false)}
               className="mobile-link"
             >
-              Services
+             information
             </Link>
             <Link
               to="/contact"
