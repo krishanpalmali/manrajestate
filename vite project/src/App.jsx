@@ -6,12 +6,12 @@ import SignIn from "./pages/SignIn";
 import Profile from "./pages/Profile";
 import Signout from "./pages/Signout";
 import Header from "./component/Header";
-import Buy from "./pages/buy";
-import Sell from "./pages/sell";
+import Buy from "./pages/Buy";
+import Sell from "./pages/Sell";
 import Admin from "./pages/admin";
 import AdminLogin from "./pages/admin.login";
 import PrivateRoute from "./component/PrivateRoute";
-import Contact from "./pages/contect";
+import Contact from "./pages/Contact";
 import Footer from "./component/Footer";
 import Information from "./component/Information";
 
