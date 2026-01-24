@@ -8,17 +8,17 @@ import router from "./routes/users.routes.js";
 import buyRoute from "./routes/buy.routes.js";
 import sellRoute from "./routes/Sell.routes.js";
 import adminRoute from "./routes/admin.routes.js";
-
-
+import path from "path";
 
 dotenv.config();
 
 const app = express();
+const __dirname = path.resolve();
 
-// 🔥 CORS MUST for cookies
+// CORS
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: true,
     credentials: true,
   })
 );
@@ -26,34 +26,28 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-console.log("Mongo URI:", process.env.MONGODB_URI);
-
+// MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected successfully"))
   .catch((err) => console.log("MongoDB connection error:", err));
 
-// test route
-app.get("/", (req, res) => {
-  res.json({ message: "hello world" });
-});
-
-// user routes
+// API routes
 app.use("/api/user", router);
-
-// auth routes
 app.use("/api/auth", authRouter);
-
-
-// middleware ke baad
 app.use("/api/buy", buyRoute);
 app.use("/api/sell", sellRoute);
-
-
 app.use("/api/admin", adminRoute);
 
+// Frontend (Vite build)
+app.use(express.static(path.join(__dirname, "vite project", "dist")));
 
-// error middleware
+// Express 5 compatible catch-all
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "vite project", "dist", "index.html"));
+});
+
+// Error middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";
@@ -66,7 +60,6 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}!!`);
 });
