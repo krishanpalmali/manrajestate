@@ -11,7 +11,7 @@ import Sell from "./pages/Sell";
 import Admin from "./pages/admin";
 import AdminLogin from "./pages/admin.login";
 import PrivateRoute from "./component/PrivateRoute";
-import Contact from "./pages/Contact";
+import Contact from "./pages/Contect";
 import Footer from "./component/Footer";
 import Information from "./component/Information";
 
