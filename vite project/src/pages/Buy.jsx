@@ -21,7 +21,7 @@ const Buy = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:3000/api/buy/create", {
+      const res = await fetch("/api/buy/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,7 +38,6 @@ const Buy = () => {
       alert("Buy Request Submitted Successfully 🚀");
       console.log(data);
 
-      // Reset form
       setFormData({
         name: "",
         phone: "",
@@ -48,10 +47,9 @@ const Buy = () => {
         propertyType: "",
       });
 
-      // Redirect Home
       navigate("/");
     } catch (error) {
-      console.error(error);
+      console.error("Buy form error:", error);
       alert("Error: " + error.message);
     }
   };

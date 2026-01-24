@@ -8,8 +8,8 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/admin/dashboard", {
-          credentials: "include",
+        const res = await fetch("/api/admin/dashboard", {
+          credentials: "include", // cookie ke liye must
         });
 
         if (!res.ok) {
@@ -20,6 +20,7 @@ const AdminDashboard = () => {
         const result = await res.json();
         setData(result);
       } catch (err) {
+        console.error("Dashboard fetch error:", err);
         navigate("/admin/login");
       }
     };
@@ -28,10 +29,12 @@ const AdminDashboard = () => {
   }, [navigate]);
 
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
       {data ? (
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+        <pre className="bg-gray-100 p-4 rounded">
+          {JSON.stringify(data, null, 2)}
+        </pre>
       ) : (
         <p>Loading...</p>
       )}

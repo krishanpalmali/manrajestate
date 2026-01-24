@@ -22,7 +22,7 @@ const Sell = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:3000/api/sell/create", {
+      const res = await fetch("/api/sell/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,7 +53,7 @@ const Sell = () => {
       // Redirect to Home page
       navigate("/");
     } catch (error) {
-      console.error(error);
+      console.error("Sell form error:", error);
       alert("Error: " + error.message);
     }
   };

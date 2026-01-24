@@ -23,7 +23,7 @@ router.post("/login", (req, res) => {
     .cookie("access_token", token, {
       httpOnly: true,
       sameSite: "lax",
-      secure: false, // localhost ke liye
+      secure: process.env.NODE_ENV === "production",
     })
     .status(200)
     .json({

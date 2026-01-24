@@ -9,33 +9,33 @@ const AdminLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
- const handleLogin = async (e) => {
-  e.preventDefault();
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-  try {
-    const res = await fetch("http://localhost:3000/api/admin/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await res.json();
-    console.log("Status:", res.status);
-    console.log("Response:", data);
+      const data = await res.json();
+      console.log("Status:", res.status);
+      console.log("Response:", data);
 
-    if (!res.ok) {
-      alert(data.message);
-      return;
+      if (!res.ok) {
+        alert(data.message || "Login failed");
+        return;
+      }
+
+      dispatch(signInSuccess(data.admin));
+      navigate("/admin");
+    } catch (err) {
+      console.error("Login error:", err);
+      alert("Server not reachable");
     }
-
-    dispatch(signInSuccess(data.admin)); // ya data (backend ke hisab se)
-    navigate("/admin");
-  } catch (err) {
-    console.error("Login error:", err);
-  }
-};
-
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
