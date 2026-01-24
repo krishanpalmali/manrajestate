@@ -21,10 +21,48 @@ const sellSchema = new mongoose.Schema(
     propertyType: {
       type: String,
       required: true,
-      enum: ["House", "Plot", "Flat", "Land"],
+      enum: [
+        // Residential
+        "Apartment",
+        "Flat",
+        "Independent House",
+        "House",
+        "Villa",
+        "Duplex",
+        "Studio Apartment",
+        "Row House",
+        "Farm House",
+        "Plot / Land",
+        "Plot",
+        "Land",
+
+        // Commercial
+        "Commercial Shop",
+        "Office Space",
+        "Showroom",
+        "Warehouse / Godown",
+        "Industrial Plot",
+        "Factory",
+        "IT Park",
+
+        // Rental
+        "PG / Hostel",
+        "Paying Guest",
+        "Rental Apartment",
+        "Rental Shop",
+
+        // Special
+        "Hotel / Resort",
+        "Guest House",
+        "Banquet Hall",
+        "Restaurant / Cafe",
+        "Hospital / Clinic",
+        "School / College",
+        "Land for Development",
+      ],
     },
     price: {
-      type: Number,
+      type: String ,
       required: true,
     },
     location: {

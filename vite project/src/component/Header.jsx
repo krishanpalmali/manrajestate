@@ -13,7 +13,6 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-
         {/* Logo */}
         <div className="flex items-center gap-3">
           <img
@@ -35,7 +34,7 @@ const Header = () => {
             About
           </Link>
           <Link to="/information" className="nav-link">
-          Information
+            Information
           </Link>
           <Link to="/contact" className="nav-link">
             Contact
@@ -54,11 +53,11 @@ const Header = () => {
             />
           </div>
 
-          {/* Auth */}
+          {/* Auth / Profile */}
           {currentUser ? (
             <Link to="/profile">
               <img
-                src={currentUser.avatar || defaultAvatar}
+                src={currentUser.avatar || currentUser.photo || defaultAvatar}
                 alt="profile"
                 className="w-9 h-9 rounded-full object-cover border-2 border-blue-600 cursor-pointer"
               />
@@ -109,11 +108,11 @@ const Header = () => {
               About
             </Link>
             <Link
-              to="/services"
+              to="/information"
               onClick={() => setMenuOpen(false)}
               className="mobile-link"
             >
-             information
+              Information
             </Link>
             <Link
               to="/contact"
@@ -161,9 +160,8 @@ const Header = () => {
 
 export default Header;
 
-/* Add this in your global CSS (or Tailwind layer) */
+/* Global CSS (or Tailwind layer)
 
-/*
 .nav-link {
   @apply text-gray-700 font-medium hover:text-blue-600 transition;
 }
@@ -171,4 +169,5 @@ export default Header;
 .mobile-link {
   @apply text-gray-700 font-medium py-2 border-b border-gray-200;
 }
+
 */

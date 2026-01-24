@@ -55,7 +55,11 @@ export const signin = async (req, res, next) => {
     });
 
     res
-      .cookie("access_token", token, { httpOnly: true })
+      .cookie("access_token", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false, // true only in production with HTTPS
+      })
       .status(200)
       .json({
         success: true,
@@ -74,7 +78,11 @@ export const signin = async (req, res, next) => {
 // GOOGLE LOGIN
 export const google = async (req, res, next) => {
   try {
+    console.log("Google Auth Body:", req.body);
+
     const { username, email, photo } = req.body;
+
+    if (!email) return next(errorHandler(400, "Email is required"));
 
     let user = await User.findOne({ email });
 
@@ -98,7 +106,11 @@ export const google = async (req, res, next) => {
     });
 
     res
-      .cookie("access_token", token, { httpOnly: true })
+      .cookie("access_token", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false, // true only in production with HTTPS
+      })
       .status(200)
       .json({
         success: true,
@@ -110,6 +122,7 @@ export const google = async (req, res, next) => {
         },
       });
   } catch (error) {
+    console.log("Google Auth Error:", error);
     next(error);
   }
 };
