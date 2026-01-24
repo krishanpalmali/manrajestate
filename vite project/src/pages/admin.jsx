@@ -23,7 +23,7 @@ const Admin = () => {
   // BUY DATA
   const fetchBuyData = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/buy/", {
+      const res = await fetch("/api/buy", {
         credentials: "include",
       });
       const result = await res.json();
@@ -44,7 +44,7 @@ const Admin = () => {
   // SELL DATA
   const fetchSellData = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/sell/", {
+      const res = await fetch("/api/sell", {
         credentials: "include",
       });
       const result = await res.json();
@@ -65,7 +65,7 @@ const Admin = () => {
   const deleteBuyRequest = async (id) => {
     if (!window.confirm("Delete this Buy request?")) return;
     try {
-      await fetch(`http://localhost:3000/api/buy/${id}`, {
+      await fetch(`/api/buy/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -78,7 +78,7 @@ const Admin = () => {
   const deleteSellRequest = async (id) => {
     if (!window.confirm("Delete this Sell request?")) return;
     try {
-      await fetch(`http://localhost:3000/api/sell/${id}`, {
+      await fetch(`/api/sell/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
