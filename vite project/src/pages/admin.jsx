@@ -26,6 +26,12 @@ const Admin = () => {
       const res = await fetch("/api/buy", {
         credentials: "include",
       });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
       const result = await res.json();
 
       if (Array.isArray(result)) {
@@ -36,7 +42,7 @@ const Admin = () => {
         setBuyData([]);
       }
     } catch (error) {
-      console.error("Error fetching buy data:", error);
+      console.error("Error fetching buy data:", error.message);
       setBuyData([]);
     }
   };
@@ -47,6 +53,12 @@ const Admin = () => {
       const res = await fetch("/api/sell", {
         credentials: "include",
       });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
       const result = await res.json();
 
       if (Array.isArray(result)) {
@@ -57,7 +69,7 @@ const Admin = () => {
         setSellData([]);
       }
     } catch (error) {
-      console.error("Error fetching sell data:", error);
+      console.error("Error fetching sell data:", error.message);
       setSellData([]);
     }
   };
@@ -65,26 +77,38 @@ const Admin = () => {
   const deleteBuyRequest = async (id) => {
     if (!window.confirm("Delete this Buy request?")) return;
     try {
-      await fetch(`/api/buy/${id}`, {
+      const res = await fetch(`/api/buy/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
       setBuyData((prev) => prev.filter((item) => item._id !== id));
     } catch (error) {
-      console.error("Error deleting buy request:", error);
+      console.error("Error deleting buy request:", error.message);
     }
   };
 
   const deleteSellRequest = async (id) => {
     if (!window.confirm("Delete this Sell request?")) return;
     try {
-      await fetch(`/api/sell/${id}`, {
+      const res = await fetch(`/api/sell/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
       setSellData((prev) => prev.filter((item) => item._id !== id));
     } catch (error) {
-      console.error("Error deleting sell request:", error);
+      console.error("Error deleting sell request:", error.message);
     }
   };
 
@@ -130,8 +154,8 @@ const Admin = () => {
         <h2 className="text-xl font-semibold mb-4 text-gray-700">
           📊 Buy vs Sell Requests Overview
         </h2>
-        <div className="w-full h-64">
-          <ResponsiveContainer width="100%" height="100%">
+        <div style={{ width: "100%", height: 300, minHeight: 300 }}>
+          <ResponsiveContainer>
             <BarChart data={chartData}>
               <XAxis dataKey="name" />
               <YAxis />
