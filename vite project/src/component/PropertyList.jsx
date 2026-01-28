@@ -3,7 +3,7 @@ import axios from "axios";
 
 const PropertyList = () => {
   const [properties, setProperties] = useState([]);
-  const [expanded, setExpanded] = useState(null); // kaunsa card open hai
+  const [expanded, setExpanded] = useState(null);
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -16,6 +16,7 @@ const PropertyList = () => {
         console.log("Fetch error:", error);
       }
     };
+
     fetchProperties();
   }, []);
 
@@ -35,8 +36,7 @@ const PropertyList = () => {
             key={p._id}
             className="bg-white rounded-lg shadow-md overflow-hidden"
           >
-            {/* Agar Firebase image hai to direct URL chalega,
-                agar backend upload hai to /uploads/... already complete path hota hai */}
+            {/* Cloudinary image direct URL */}
             <img
               src={p.image}
               alt={p.title}

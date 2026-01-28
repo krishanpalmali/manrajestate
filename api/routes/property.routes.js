@@ -1,42 +1,64 @@
 import express from "express";
-import { upload } from "../utils/upload.js";
 import Property from "../model/property.model.js";
-import fs from "fs";
-import path from "path";
 import { verifyAdmin } from "../utils/verifyadmin.js";
+import cloudinary from "../utils/cloudinary.js";
 
 const router = express.Router();
 
-// CREATE PROPERTY (normally admin only hona chahiye)
-router.post("/create", verifyAdmin, upload.single("image"), async (req, res) => {
+/*
+Frontend se JSON me image base64 aayegi:
+{
+  title,
+  price,
+  location,
+  description,
+  image: "data:image/png;base64,...."
+}
+*/
+
+// ================= CREATE PROPERTY =================
+router.post("/create", verifyAdmin, async (req, res) => {
   try {
+    const { title, price, location, description, image } = req.body;
+
+    if (!title || !price || !location || !description || !image) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Upload to Cloudinary
+    const uploadResult = await cloudinary.uploader.upload(image, {
+      folder: "properties",
+    });
+
     const property = new Property({
-      title: req.body.title,
-      price: req.body.price,
-      location: req.body.location,
-      description: req.body.description,
-      image: `/uploads/${req.file.filename}`,
+      title,
+      price,
+      location,
+      description,
+      image: uploadResult.secure_url,
     });
 
     await property.save();
+
     res.status(201).json(property);
   } catch (error) {
-    console.log(error);
+    console.log("Create property error:", error);
     res.status(500).json({ message: "Property create failed" });
   }
 });
 
-// GET ALL PROPERTIES (sab ke liye open)
+// ================= GET ALL PROPERTIES =================
 router.get("/all", async (req, res) => {
   try {
-    const data = await Property.find();
+    const data = await Property.find().sort({ createdAt: -1 });
     res.json(data);
   } catch (error) {
+    console.log("Fetch error:", error);
     res.status(500).json({ message: "Fetch failed" });
   }
 });
 
-// DELETE PROPERTY + IMAGE (ONLY ADMIN)
+// ================= DELETE PROPERTY =================
 router.delete("/:id", verifyAdmin, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -45,15 +67,18 @@ router.delete("/:id", verifyAdmin, async (req, res) => {
       return res.status(404).json({ message: "Property not found" });
     }
 
-    // image ka full path
-    const imagePath = path.join(process.cwd(), property.image);
+    // Cloudinary se image delete
+    const imageUrl = property.image;
+    const publicId = imageUrl
+      .split("/")
+      .slice(-2)
+      .join("/")
+      .split(".")[0]; 
+    // Example: properties/abc123xyz
 
-    // image delete
-    fs.unlink(imagePath, (err) => {
-      if (err) console.log("Image delete error:", err);
-    });
+    await cloudinary.uploader.destroy(publicId);
 
-    // DB se delete
+    // MongoDB se delete
     await Property.findByIdAndDelete(req.params.id);
 
     res.json({
@@ -61,7 +86,7 @@ router.delete("/:id", verifyAdmin, async (req, res) => {
       message: "Property deleted successfully",
     });
   } catch (error) {
-    console.log(error);
+    console.log("Delete error:", error);
     res.status(500).json({ message: "Delete failed" });
   }
 });

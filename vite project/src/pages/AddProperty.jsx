@@ -14,13 +14,21 @@ export default function AddProperty() {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  // Convert image to base64
+  const convertBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
   // ---------------- FETCH ALL PROPERTIES ----------------
   const fetchProperties = async () => {
     try {
       const res = await fetch("/api/property/all", {
         credentials: "include",
       });
-
       const data = await res.json();
       setProperties(data);
     } catch (error) {
@@ -41,20 +49,29 @@ export default function AddProperty() {
       return;
     }
 
-    const data = new FormData();
-    data.append("title", form.title);
-    data.append("price", form.price);
-    data.append("location", form.location);
-    data.append("description", form.description);
-    data.append("image", image);
+    // 5MB limit
+    if (image.size > 5 * 1024 * 1024) {
+      alert("Image size must be less than 5MB");
+      return;
+    }
 
     try {
       setLoading(true);
 
+      const base64Image = await convertBase64(image);
+
+      const propertyData = {
+        ...form,
+        image: base64Image,
+      };
+
       const res = await fetch("/api/property/create", {
         method: "POST",
-        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
         credentials: "include",
+        body: JSON.stringify(propertyData),
       });
 
       const result = await res.json();
@@ -123,6 +140,7 @@ export default function AddProperty() {
           value={form.title}
           onChange={handleChange}
           className="border p-2 w-full mb-3"
+          required
         />
         <input
           name="price"
@@ -130,6 +148,7 @@ export default function AddProperty() {
           value={form.price}
           onChange={handleChange}
           className="border p-2 w-full mb-3"
+          required
         />
         <input
           name="location"
@@ -137,19 +156,24 @@ export default function AddProperty() {
           value={form.location}
           onChange={handleChange}
           className="border p-2 w-full mb-3"
+          required
         />
+
         <input
           type="file"
           accept="image/*"
           onChange={(e) => setImage(e.target.files[0])}
           className="border p-2 w-full mb-3"
+          required
         />
+
         <textarea
           name="description"
           placeholder="Description"
           value={form.description}
           onChange={handleChange}
           className="border p-2 w-full mb-3"
+          required
         ></textarea>
 
         <button
@@ -173,7 +197,7 @@ export default function AddProperty() {
               className="bg-white rounded-lg shadow overflow-hidden"
             >
               <img
-                src={p.image.startsWith("http") ? p.image : p.image}
+                src={p.image}
                 alt={p.title}
                 className="h-40 w-full object-cover"
               />

@@ -25,7 +25,7 @@ app.use(
 );
 
 // ================= MIDDLEWARES =================
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "10mb" })); // base64 images ke liye
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
@@ -35,8 +35,8 @@ mongoose
   .then(() => console.log("MongoDB connected successfully"))
   .catch((err) => console.log("MongoDB connection error:", err));
 
-// ================= STATIC UPLOADS =================
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// ❌ uploads static folder hata diya (ab Cloudinary use ho raha hai)
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ================= API ROUTES (HAMESHA PEHLE) =================
 app.use("/api/user", router);
@@ -47,8 +47,8 @@ app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
 // ================= FRONTEND SERVE (LAST ME) =================
-// Tumhara frontend folder ka naam: "vite project"
-const clientPath = path.join(__dirname, "..", "vite project", "dist");
+// Render par tumhara Vite build yahin hona chahiye: api/dist
+const clientPath = path.join(__dirname, "dist");
 app.use(express.static(clientPath));
 
 // Sirf non-API routes par React ka index.html bhejo
