@@ -9,10 +9,6 @@ import buyRoute from "./routes/buy.routes.js";
 import sellRoute from "./routes/Sell.routes.js";
 import adminRoute from "./routes/admin.routes.js";
 import propertyRoutes from "./routes/property.routes.js";
-
-
-
- 
 import path from "path";
 
 dotenv.config();
@@ -40,7 +36,7 @@ mongoose
 // Uploads folder public
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// API routes
+// ================= API ROUTES (PEHLE) =================
 app.use("/api/user", router);
 app.use("/api/auth", authRouter);
 app.use("/api/buy", buyRoute);
@@ -48,16 +44,12 @@ app.use("/api/sell", sellRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
- 
+// ================= FRONTEND (LAST ME) =================
+const clientPath = path.join(__dirname, "dist");
+app.use(express.static(clientPath));
 
-// Frontend (Vite build folder)
-app.use(express.static(path.join(__dirname, "..", "vite project", "dist")));
-
-// Catch-all
-app.use((req, res) => {
-  res.sendFile(
-    path.join(__dirname, "..", "vite project", "dist", "index.html")
-  );
+app.get("*", (req, res) => {
+  res.sendFile(path.join(clientPath, "index.html"));
 });
 
 // Error middleware
@@ -74,5 +66,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}!!`);
+  console.log(`Server is running on port ${PORT} 🚀`);
 });
