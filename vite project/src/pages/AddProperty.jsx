@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+const API = import.meta.env.VITE_API_URL;
+
 export default function AddProperty() {
   const [form, setForm] = useState({
     title: "",
@@ -17,7 +19,9 @@ export default function AddProperty() {
   // Fetch all properties
   const fetchProperties = async () => {
     try {
-      const res = await fetch("/api/property/all");
+      const res = await fetch(`${API}/api/property/all`, {
+        credentials: "include",
+      });
       const data = await res.json();
       setProperties(data);
     } catch (error) {
@@ -48,10 +52,10 @@ export default function AddProperty() {
     try {
       setLoading(true);
 
-      const res = await fetch("/api/property/create", {
+      const res = await fetch(`${API}/api/property/create`, {
         method: "POST",
         body: data,
-        credentials: "include", // admin check ke liye
+        credentials: "include",
       });
 
       const result = await res.json();
@@ -71,7 +75,7 @@ export default function AddProperty() {
       });
       setImage(null);
 
-      fetchProperties(); // list refresh
+      fetchProperties();
     } catch (error) {
       console.log(error);
       alert("Server error");
@@ -85,7 +89,7 @@ export default function AddProperty() {
     if (!window.confirm("Delete this property?")) return;
 
     try {
-      const res = await fetch(`/api/property/${id}`, {
+      const res = await fetch(`${API}/api/property/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -157,7 +161,7 @@ export default function AddProperty() {
         </button>
       </form>
 
-      {/* PROPERTY LIST UNDER ADD PROPERTY */}
+      {/* PROPERTY LIST */}
       <div>
         <h2 className="text-2xl font-bold mb-4 text-center">
           Existing Properties
@@ -170,7 +174,7 @@ export default function AddProperty() {
               className="bg-white rounded-lg shadow overflow-hidden"
             >
               <img
-                src={`http://localhost:3000${p.image}`}
+                src={`${API}${p.image}`}
                 alt={p.title}
                 className="h-40 w-full object-cover"
               />
@@ -193,4 +197,3 @@ export default function AddProperty() {
     </div>
   );
 }
-
