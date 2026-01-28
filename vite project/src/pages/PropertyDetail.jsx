@@ -3,10 +3,6 @@ import { useState } from "react";
 import { storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-const API = import.meta.env.VITE_API_URL; 
-// Local:  http://localhost:3000
-// Render: https://your-app.onrender.com
-
 const AddProperty = () => {
   const [form, setForm] = useState({
     title: "",
@@ -65,13 +61,13 @@ const AddProperty = () => {
       // 1. Upload image to Firebase
       const imageURL = await uploadImage(image);
 
-      // 2. Send property data to backend
+      // 2. Send property data to backend (relative API path)
       const propertyData = {
         ...form,
         image: imageURL,
       };
 
-      const res = await fetch(`${API}/api/property/create`, {
+      const res = await fetch("/api/property/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

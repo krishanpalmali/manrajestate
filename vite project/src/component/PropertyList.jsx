@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const API = import.meta.env.VITE_API_URL; 
-// Example:
-// Local:  http://localhost:3000
-// Render: https://your-app.onrender.com
-
 const PropertyList = () => {
   const [properties, setProperties] = useState([]);
   const [expanded, setExpanded] = useState(null); // kaunsa card open hai
@@ -13,7 +8,7 @@ const PropertyList = () => {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const res = await axios.get(`${API}/api/property/all`, {
+        const res = await axios.get("/api/property/all", {
           withCredentials: true,
         });
         setProperties(res.data);
@@ -40,8 +35,10 @@ const PropertyList = () => {
             key={p._id}
             className="bg-white rounded-lg shadow-md overflow-hidden"
           >
+            {/* Agar Firebase image hai to direct URL chalega,
+                agar backend upload hai to /uploads/... already complete path hota hai */}
             <img
-              src={`${API}${p.image}`}
+              src={p.image}
               alt={p.title}
               className="h-48 w-full object-cover"
             />

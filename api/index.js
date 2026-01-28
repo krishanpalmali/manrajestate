@@ -38,7 +38,7 @@ mongoose
 // ================= STATIC UPLOADS =================
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ================= API ROUTES (PEHLE HAMESHA) =================
+// ================= API ROUTES (HAMESHA PEHLE) =================
 app.use("/api/user", router);
 app.use("/api/auth", authRouter);
 app.use("/api/buy", buyRoute);

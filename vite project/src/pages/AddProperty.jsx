@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-const API = import.meta.env.VITE_API_URL; // ex: https://your-app.onrender.com
-
 export default function AddProperty() {
   const [form, setForm] = useState({
     title: "",
@@ -13,40 +11,28 @@ export default function AddProperty() {
   const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState([]);
 
-  useEffect(() => {
-    console.log("API URL:", API); // must NOT be undefined
-    fetchProperties();
-  }, []);
-
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  // -------- Fetch all properties (with HTML-guard) --------
+  // ---------------- FETCH ALL PROPERTIES ----------------
   const fetchProperties = async () => {
     try {
-      const res = await fetch(`${API}/api/property/all`, {
+      const res = await fetch("/api/property/all", {
         credentials: "include",
       });
 
-      const text = await res.text();
-
-      // Guard: agar HTML aa gaya to API galat hit ho rahi hai
-      if (text.trim().startsWith("<")) {
-        console.error(
-          "HTML received instead of JSON. Check VITE_API_URL:",
-          API
-        );
-        return;
-      }
-
-      const data = JSON.parse(text);
+      const data = await res.json();
       setProperties(data);
     } catch (error) {
-      console.log("Fetch properties error:", error);
+      console.log("Fetch error:", error);
     }
   };
 
-  // -------- Add property --------
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  // ---------------- ADD PROPERTY ----------------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -65,27 +51,20 @@ export default function AddProperty() {
     try {
       setLoading(true);
 
-      const res = await fetch(`${API}/api/property/create`, {
+      const res = await fetch("/api/property/create", {
         method: "POST",
         body: data,
         credentials: "include",
       });
 
-      const text = await res.text();
-
-      if (text.trim().startsWith("<")) {
-        alert("API URL galat hai. HTML mil raha hai, JSON nahi.");
-        return;
-      }
-
-      const result = JSON.parse(text);
+      const result = await res.json();
 
       if (!res.ok) {
         alert(result.message || "Upload failed");
         return;
       }
 
-      alert("Property Added Successfully");
+      alert("Property Added Successfully 🎉");
 
       setForm({
         title: "",
@@ -104,24 +83,17 @@ export default function AddProperty() {
     }
   };
 
-  // -------- Delete property --------
+  // ---------------- DELETE PROPERTY ----------------
   const deleteProperty = async (id) => {
     if (!window.confirm("Delete this property?")) return;
 
     try {
-      const res = await fetch(`${API}/api/property/${id}`, {
+      const res = await fetch(`/api/property/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
 
-      const text = await res.text();
-
-      if (text.trim().startsWith("<")) {
-        alert("API URL galat hai. HTML mil raha hai, JSON nahi.");
-        return;
-      }
-
-      const result = JSON.parse(text);
+      const result = await res.json();
 
       if (!res.ok) {
         alert(result.message || "Delete failed");
@@ -201,7 +173,7 @@ export default function AddProperty() {
               className="bg-white rounded-lg shadow overflow-hidden"
             >
               <img
-                src={`${API}${p.image}`}
+                src={p.image.startsWith("http") ? p.image : p.image}
                 alt={p.title}
                 className="h-40 w-full object-cover"
               />
