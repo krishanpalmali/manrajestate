@@ -19,7 +19,7 @@ const __dirname = path.resolve();
 // ================= CORS =================
 app.use(
   cors({
-    origin: true,       // abhi Render + localhost dono allow
+    origin: true,
     credentials: true,
   })
 );
@@ -38,7 +38,7 @@ mongoose
 // ================= STATIC UPLOADS =================
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ================= API ROUTES (PEHLE) =================
+// ================= API ROUTES =================
 app.use("/api/user", router);
 app.use("/api/auth", authRouter);
 app.use("/api/buy", buyRoute);
@@ -46,12 +46,12 @@ app.use("/api/sell", sellRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
-// ================= FRONTEND (LAST ME) =================
-// Vite build ka dist folder backend ke root me hona chahiye
-const clientPath = path.join(__dirname, "dist");
+// ================= FRONTEND SERVE =================
+// Tumhara frontend folder ka naam "vite project" hai (space ke saath)
+const clientPath = path.join(__dirname, "..", "vite project", "dist");
 app.use(express.static(clientPath));
 
-// ⚠️ Express v5 compatible wildcard (string "*" use mat karna)
+// Express v5 compatible wildcard
 app.all(/.*/, (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
