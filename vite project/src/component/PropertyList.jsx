@@ -3,6 +3,7 @@ import axios from "axios";
 
 const PropertyList = () => {
   const [properties, setProperties] = useState([]);
+  const [expanded, setExpanded] = useState(null); // kis card ka read more open hai
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -15,6 +16,10 @@ const PropertyList = () => {
     };
     fetchProperties();
   }, []);
+
+  const toggleReadMore = (id) => {
+    setExpanded(expanded === id ? null : id);
+  };
 
   return (
     <div className="px-6 py-10 bg-gray-50">
@@ -29,17 +34,30 @@ const PropertyList = () => {
             className="bg-white rounded-lg shadow-md overflow-hidden"
           >
             <img
-              src={`http://localhost:3000${p.image}`}   // 🔥 yahi main fix hai
+              src={`http://localhost:3000${p.image}`}
               alt={p.title}
               className="h-48 w-full object-cover"
             />
+
             <div className="p-4">
               <h3 className="text-xl font-semibold">{p.title}</h3>
               <p className="text-gray-600">📍 {p.location}</p>
               <p className="text-green-600 font-bold">₹ {p.price}</p>
+
+              {/* DESCRIPTION */}
               <p className="text-sm text-gray-500 mt-2">
-                {p.description.slice(0, 80)}...
+                {expanded === p._id
+                  ? p.description
+                  : `${p.description.slice(0, 80)}...`}
               </p>
+
+              {/* READ MORE / READ LESS */}
+              <button
+                onClick={() => toggleReadMore(p._id)}
+                className="mt-2 text-indigo-600 font-semibold hover:underline"
+              >
+                {expanded === p._id ? "Read Less ↑" : "Read More →"}
+              </button>
             </div>
           </div>
         ))}
