@@ -1,5 +1,6 @@
 // src/pages/Admin.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   BarChart,
   Bar,
@@ -10,107 +11,83 @@ import {
 } from "recharts";
 
 const Admin = () => {
+  const navigate = useNavigate();
+
   const [buyData, setBuyData] = useState([]);
   const [sellData, setSellData] = useState([]);
+  const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([fetchBuyData(), fetchSellData()]).finally(() =>
-      setLoading(false)
+    Promise.all([fetchBuyData(), fetchSellData(), fetchProperties()]).finally(
+      () => setLoading(false)
     );
   }, []);
 
-  // BUY DATA
+  // ================= FETCH FUNCTIONS =================
+
   const fetchBuyData = async () => {
     try {
-      const res = await fetch("/api/buy", {
-        credentials: "include",
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-      }
-
+      const res = await fetch("/api/buy", { credentials: "include" });
       const result = await res.json();
-
-      if (Array.isArray(result)) {
-        setBuyData(result);
-      } else if (result.success && Array.isArray(result.data)) {
-        setBuyData(result.data);
-      } else {
-        setBuyData([]);
-      }
+      setBuyData(Array.isArray(result) ? result : result.data || []);
     } catch (error) {
-      console.error("Error fetching buy data:", error.message);
+      console.error("Buy data error:", error.message);
       setBuyData([]);
     }
   };
 
-  // SELL DATA
   const fetchSellData = async () => {
     try {
-      const res = await fetch("/api/sell", {
-        credentials: "include",
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-      }
-
+      const res = await fetch("/api/sell", { credentials: "include" });
       const result = await res.json();
-
-      if (Array.isArray(result)) {
-        setSellData(result);
-      } else if (result.success && Array.isArray(result.data)) {
-        setSellData(result.data);
-      } else {
-        setSellData([]);
-      }
+      setSellData(Array.isArray(result) ? result : result.data || []);
     } catch (error) {
-      console.error("Error fetching sell data:", error.message);
+      console.error("Sell data error:", error.message);
       setSellData([]);
     }
   };
 
+  const fetchProperties = async () => {
+    try {
+      const res = await fetch("/api/property/all");
+      const data = await res.json();
+      setProperties(data || []);
+    } catch (error) {
+      console.error("Property fetch error:", error.message);
+      setProperties([]);
+    }
+  };
+
+  // ================= DELETE FUNCTIONS =================
+
   const deleteBuyRequest = async (id) => {
     if (!window.confirm("Delete this Buy request?")) return;
     try {
-      const res = await fetch(`/api/buy/${id}`, {
+      await fetch(`/api/buy/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-      }
-
       setBuyData((prev) => prev.filter((item) => item._id !== id));
     } catch (error) {
-      console.error("Error deleting buy request:", error.message);
+      console.error("Delete Buy error:", error.message);
     }
   };
 
   const deleteSellRequest = async (id) => {
     if (!window.confirm("Delete this Sell request?")) return;
     try {
-      const res = await fetch(`/api/sell/${id}`, {
+      await fetch(`/api/sell/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-      }
-
       setSellData((prev) => prev.filter((item) => item._id !== id));
     } catch (error) {
-      console.error("Error deleting sell request:", error.message);
+      console.error("Delete Sell error:", error.message);
     }
   };
+
+  // ================= CHART DATA =================
 
   const chartData = [
     { name: "Buy Requests", value: buyData.length },
@@ -120,25 +97,35 @@ const Admin = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen text-xl font-semibold">
-        Loading Admin Panel...
+        Loading Admin Dashboard...
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-4xl font-bold mb-10 text-center text-indigo-600">
+      <h1 className="text-4xl font-bold mb-6 text-center text-indigo-600">
         🛠 Admin Dashboard
       </h1>
 
+      {/* ADD PROPERTY BUTTON */}
+      <div className="flex justify-center mb-8">
+        <button
+          onClick={() => navigate("/admin/add-property")}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow-md transition"
+        >
+          ➕ Add New Property
+        </button>
+      </div>
+
       {/* STATS CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
         <div className="bg-white p-5 rounded-xl shadow text-center">
-          <h3 className="text-gray-500">Total Buy Requests</h3>
+          <h3 className="text-gray-500">Buy Requests</h3>
           <p className="text-3xl font-bold text-green-600">{buyData.length}</p>
         </div>
         <div className="bg-white p-5 rounded-xl shadow text-center">
-          <h3 className="text-gray-500">Total Sell Requests</h3>
+          <h3 className="text-gray-500">Sell Requests</h3>
           <p className="text-3xl font-bold text-blue-600">{sellData.length}</p>
         </div>
         <div className="bg-white p-5 rounded-xl shadow text-center">
@@ -147,14 +134,20 @@ const Admin = () => {
             {buyData.length + sellData.length}
           </p>
         </div>
+        <div className="bg-white p-5 rounded-xl shadow text-center">
+          <h3 className="text-gray-500">Total Properties</h3>
+          <p className="text-3xl font-bold text-purple-600">
+            {properties.length}
+          </p>
+        </div>
       </div>
 
       {/* GRAPH SECTION */}
       <div className="bg-white p-6 rounded-xl shadow-lg mb-12">
         <h2 className="text-xl font-semibold mb-4 text-gray-700">
-          📊 Buy vs Sell Requests Overview
+          📊 Buy vs Sell Requests
         </h2>
-        <div style={{ width: "100%", height: 300, minHeight: 300 }}>
+        <div style={{ width: "100%", height: 300 }}>
           <ResponsiveContainer>
             <BarChart data={chartData}>
               <XAxis dataKey="name" />
@@ -166,16 +159,11 @@ const Admin = () => {
         </div>
       </div>
 
-      {/* BUY REQUESTS */}
+      {/* ================= BUY REQUESTS TABLE ================= */}
       <div className="bg-white p-5 rounded-xl shadow-lg mb-10">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-green-600">
-            🏠 Buy Requests
-          </h2>
-          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-            Total: {buyData.length}
-          </span>
-        </div>
+        <h2 className="text-2xl font-semibold text-green-600 mb-4">
+          🏠 Buy Requests
+        </h2>
 
         <div className="overflow-x-auto">
           <table className="w-full border rounded-lg">
@@ -191,14 +179,9 @@ const Admin = () => {
               </tr>
             </thead>
             <tbody>
-              {buyData.length > 0 ? (
-                buyData.map((item, index) => (
-                  <tr
-                    key={item._id}
-                    className={`${
-                      index % 2 === 0 ? "bg-gray-50" : ""
-                    } hover:bg-indigo-50 transition`}
-                  >
+              {buyData.length ? (
+                buyData.map((item, i) => (
+                  <tr key={item._id} className={i % 2 === 0 ? "bg-gray-50" : ""}>
                     <td className="border p-2">{item.name}</td>
                     <td className="border p-2">{item.phone}</td>
                     <td className="border p-2">{item.email}</td>
@@ -210,7 +193,7 @@ const Admin = () => {
                     <td className="border p-2 text-center">
                       <button
                         onClick={() => deleteBuyRequest(item._id)}
-                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition"
+                        className="bg-red-500 text-white px-3 py-1 rounded-md"
                       >
                         🗑 Delete
                       </button>
@@ -229,16 +212,11 @@ const Admin = () => {
         </div>
       </div>
 
-      {/* SELL REQUESTS */}
+      {/* ================= SELL REQUESTS TABLE ================= */}
       <div className="bg-white p-5 rounded-xl shadow-lg">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-blue-600">
-            🏷 Sell Requests
-          </h2>
-          <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
-            Total: {sellData.length}
-          </span>
-        </div>
+        <h2 className="text-2xl font-semibold text-blue-600 mb-4">
+          🏷 Sell Requests
+        </h2>
 
         <div className="overflow-x-auto">
           <table className="w-full border rounded-lg">
@@ -254,14 +232,9 @@ const Admin = () => {
               </tr>
             </thead>
             <tbody>
-              {sellData.length > 0 ? (
-                sellData.map((item, index) => (
-                  <tr
-                    key={item._id}
-                    className={`${
-                      index % 2 === 0 ? "bg-gray-50" : ""
-                    } hover:bg-indigo-50 transition`}
-                  >
+              {sellData.length ? (
+                sellData.map((item, i) => (
+                  <tr key={item._id} className={i % 2 === 0 ? "bg-gray-50" : ""}>
                     <td className="border p-2">{item.name}</td>
                     <td className="border p-2">{item.phone}</td>
                     <td className="border p-2">{item.email}</td>
@@ -273,7 +246,7 @@ const Admin = () => {
                     <td className="border p-2 text-center">
                       <button
                         onClick={() => deleteSellRequest(item._id)}
-                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition"
+                        className="bg-red-500 text-white px-3 py-1 rounded-md"
                       >
                         🗑 Delete
                       </button>

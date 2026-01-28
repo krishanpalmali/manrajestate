@@ -1,8 +1,9 @@
 // src/pages/Home.jsx
 
-import Footer from "../component/Footer";
+
 import HelpCard from "../component/helpcard";
 import Hero from "../component/hero";
+import PropertyList from "../component/PropertyList";
 
 import Services from "./service";
 
@@ -13,8 +14,10 @@ const Home = () => {
     <div className="relative h-screen w-full">
       <Hero />
       <HelpCard />
+      <PropertyList/>
       <Services />
-      <Footer/>
+
+      
      
     </div>
   );

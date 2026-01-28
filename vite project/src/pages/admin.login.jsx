@@ -20,20 +20,23 @@ const AdminLogin = () => {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json();
       console.log("Status:", res.status);
-      console.log("Response:", data);
 
+      // ❗ Pehle check karo response OK hai ya nahi
       if (!res.ok) {
-        alert(data.message || "Login failed");
-        return;
+        const text = await res.text(); // JSON na bhi ho sakta hai
+        throw new Error(text || "Login failed");
       }
+
+      // Ab safe hai JSON parse karna
+      const data = await res.json();
+      console.log("Response:", data);
 
       dispatch(signInSuccess(data.admin));
       navigate("/admin");
     } catch (err) {
       console.error("Login error:", err);
-      alert("Server not reachable");
+      alert(err.message || "Server not reachable");
     }
   };
 
