@@ -10,7 +10,7 @@ import Signout from "./pages/Signout";
 import Header from "./component/Header";
 import Buy from "./pages/Buy";
 import Sell from "./pages/Sell";
-import Admin from "./pages/Admin";
+import Admin from "./pages/admin";
 import AdminLogin from "./pages/admin.login";
 import PrivateRoute from "./component/PrivateRoute";
 import Contact from "./pages/Contect";
