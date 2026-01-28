@@ -19,7 +19,7 @@ const __dirname = path.resolve();
 // ================= CORS =================
 app.use(
   cors({
-    origin: true,
+    origin: true,       // abhi Render + localhost dono allow
     credentials: true,
   })
 );
@@ -47,11 +47,12 @@ app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
 // ================= FRONTEND (LAST ME) =================
+// Vite build ka dist folder backend ke root me hona chahiye
 const clientPath = path.join(__dirname, "dist");
 app.use(express.static(clientPath));
 
-// Express v5 compatible wildcard route
-app.all("*", (req, res) => {
+// ⚠️ Express v5 compatible wildcard (string "*" use mat karna)
+app.all(/.*/, (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
 
