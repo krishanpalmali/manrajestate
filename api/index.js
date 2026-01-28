@@ -16,7 +16,7 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 
-// CORS
+// ================= CORS =================
 app.use(
   cors({
     origin: true,
@@ -24,16 +24,18 @@ app.use(
   })
 );
 
-app.use(express.json());
+// ================= MIDDLEWARES =================
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
-// MongoDB
+// ================= MONGODB =================
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected successfully"))
   .catch((err) => console.log("MongoDB connection error:", err));
 
-// Uploads folder public
+// ================= STATIC UPLOADS =================
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ================= API ROUTES (PEHLE) =================
@@ -48,11 +50,12 @@ app.use("/api/property", propertyRoutes);
 const clientPath = path.join(__dirname, "dist");
 app.use(express.static(clientPath));
 
-app.get("*", (req, res) => {
+// Express v5 compatible wildcard route
+app.all("*", (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
 
-// Error middleware
+// ================= ERROR HANDLER =================
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";
@@ -64,6 +67,7 @@ app.use((err, req, res, next) => {
   });
 });
 
+// ================= SERVER =================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT} 🚀`);
