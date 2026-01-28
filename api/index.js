@@ -19,7 +19,7 @@ const __dirname = path.resolve();
 // ================= CORS =================
 app.use(
   cors({
-    origin: true,
+    origin: true,       // Render + localhost dono allow
     credentials: true,
   })
 );
@@ -38,7 +38,7 @@ mongoose
 // ================= STATIC UPLOADS =================
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ================= API ROUTES =================
+// ================= API ROUTES (PEHLE HAMESHA) =================
 app.use("/api/user", router);
 app.use("/api/auth", authRouter);
 app.use("/api/buy", buyRoute);
@@ -46,13 +46,13 @@ app.use("/api/sell", sellRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
-// ================= FRONTEND SERVE =================
-// Tumhara frontend folder ka naam "vite project" hai (space ke saath)
+// ================= FRONTEND SERVE (LAST ME) =================
+// Tumhara frontend folder ka naam: "vite project"
 const clientPath = path.join(__dirname, "..", "vite project", "dist");
 app.use(express.static(clientPath));
 
-// Express v5 compatible wildcard
-app.all(/.*/, (req, res) => {
+// Sirf non-API routes par React ka index.html bhejo
+app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
 
