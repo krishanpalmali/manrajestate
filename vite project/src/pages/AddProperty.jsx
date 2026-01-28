@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const API = import.meta.env.VITE_API_URL;
+const API = import.meta.env.VITE_API_URL; // ex: https://your-app.onrender.com
 
 export default function AddProperty() {
   const [form, setForm] = useState({
@@ -13,27 +13,40 @@ export default function AddProperty() {
   const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState([]);
 
+  useEffect(() => {
+    console.log("API URL:", API); // must NOT be undefined
+    fetchProperties();
+  }, []);
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  // Fetch all properties
+  // -------- Fetch all properties (with HTML-guard) --------
   const fetchProperties = async () => {
     try {
       const res = await fetch(`${API}/api/property/all`, {
         credentials: "include",
       });
-      const data = await res.json();
+
+      const text = await res.text();
+
+      // Guard: agar HTML aa gaya to API galat hit ho rahi hai
+      if (text.trim().startsWith("<")) {
+        console.error(
+          "HTML received instead of JSON. Check VITE_API_URL:",
+          API
+        );
+        return;
+      }
+
+      const data = JSON.parse(text);
       setProperties(data);
     } catch (error) {
-      console.log(error);
+      console.log("Fetch properties error:", error);
     }
   };
 
-  useEffect(() => {
-    fetchProperties();
-  }, []);
-
-  // Add property
+  // -------- Add property --------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -58,7 +71,14 @@ export default function AddProperty() {
         credentials: "include",
       });
 
-      const result = await res.json();
+      const text = await res.text();
+
+      if (text.trim().startsWith("<")) {
+        alert("API URL galat hai. HTML mil raha hai, JSON nahi.");
+        return;
+      }
+
+      const result = JSON.parse(text);
 
       if (!res.ok) {
         alert(result.message || "Upload failed");
@@ -84,7 +104,7 @@ export default function AddProperty() {
     }
   };
 
-  // Delete property
+  // -------- Delete property --------
   const deleteProperty = async (id) => {
     if (!window.confirm("Delete this property?")) return;
 
@@ -94,7 +114,14 @@ export default function AddProperty() {
         credentials: "include",
       });
 
-      const result = await res.json();
+      const text = await res.text();
+
+      if (text.trim().startsWith("<")) {
+        alert("API URL galat hai. HTML mil raha hai, JSON nahi.");
+        return;
+      }
+
+      const result = JSON.parse(text);
 
       if (!res.ok) {
         alert(result.message || "Delete failed");

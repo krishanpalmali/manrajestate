@@ -3,6 +3,10 @@ import { useState } from "react";
 import { storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
+const API = import.meta.env.VITE_API_URL; 
+// Local:  http://localhost:3000
+// Render: https://your-app.onrender.com
+
 const AddProperty = () => {
   const [form, setForm] = useState({
     title: "",
@@ -15,19 +19,19 @@ const AddProperty = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
-    setPreview(URL.createObjectURL(file)); // image preview
+    setPreview(URL.createObjectURL(file));
   };
 
+  // Firebase upload
   const uploadImage = (file) => {
     return new Promise((resolve, reject) => {
-      const fileName = new Date().getTime() + file.name;
+      const fileName = Date.now() + "_" + file.name;
       const storageRef = ref(storage, `properties/${fileName}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -39,10 +43,9 @@ const AddProperty = () => {
           setProgress(Math.round(percent));
         },
         (error) => reject(error),
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL);
-          });
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(url);
         }
       );
     });
@@ -59,20 +62,32 @@ const AddProperty = () => {
       setLoading(true);
       setProgress(0);
 
+      // 1. Upload image to Firebase
       const imageURL = await uploadImage(image);
 
+      // 2. Send property data to backend
       const propertyData = {
         ...form,
         image: imageURL,
       };
 
-      await fetch("/api/property/create", {
+      const res = await fetch(`${API}/api/property/create`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
         body: JSON.stringify(propertyData),
       });
 
-      alert("Property Added Successfully");
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Property create failed");
+        return;
+      }
+
+      alert("Property Added Successfully 🎉");
 
       setForm({
         title: "",
@@ -85,7 +100,7 @@ const AddProperty = () => {
       setProgress(0);
     } catch (error) {
       console.log(error);
-      alert("Image upload failed");
+      alert("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -102,102 +117,67 @@ const AddProperty = () => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="text-sm font-semibold text-gray-600">
-              Property Name
-            </label>
-            <input
-              type="text"
-              name="title"
-              placeholder="Luxury Villa, 2BHK Flat..."
-              value={form.title}
-              onChange={handleChange}
-              className="border p-3 rounded-lg w-full mt-1 focus:ring-2 focus:ring-indigo-400 outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-semibold text-gray-600">Price</label>
-            <input
-              type="number"
-              name="price"
-              placeholder="500000"
-              value={form.price}
-              onChange={handleChange}
-              className="border p-3 rounded-lg w-full mt-1 focus:ring-2 focus:ring-indigo-400 outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-semibold text-gray-600">Location</label>
-            <input
-              type="text"
-              name="location"
-              placeholder="Udaipur, Jaipur, Delhi..."
-              value={form.location}
-              onChange={handleChange}
-              className="border p-3 rounded-lg w-full mt-1 focus:ring-2 focus:ring-indigo-400 outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-semibold text-gray-600">
-              Upload Image
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="border p-3 rounded-lg w-full mt-1 bg-gray-50"
-            />
-          </div>
+          <input
+            name="title"
+            placeholder="Property Title"
+            value={form.title}
+            onChange={handleChange}
+            className="border p-3 rounded-lg"
+          />
+          <input
+            name="price"
+            placeholder="Price"
+            value={form.price}
+            onChange={handleChange}
+            className="border p-3 rounded-lg"
+          />
+          <input
+            name="location"
+            placeholder="Location"
+            value={form.location}
+            onChange={handleChange}
+            className="border p-3 rounded-lg"
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="border p-3 rounded-lg"
+          />
         </div>
 
-        {/* IMAGE PREVIEW */}
         {preview && (
-          <div className="mt-6">
-            <p className="text-sm text-gray-600 mb-2">Image Preview:</p>
-            <img
-              src={preview}
-              alt="Preview"
-              className="w-full h-64 object-cover rounded-xl border shadow-sm"
-            />
-          </div>
+          <img
+            src={preview}
+            alt="Preview"
+            className="mt-4 w-full h-64 object-cover rounded-lg"
+          />
         )}
 
-        <div className="mt-6">
-          <label className="text-sm font-semibold text-gray-600">
-            Description
-          </label>
-          <textarea
-            name="description"
-            placeholder="Write property details..."
-            rows="4"
-            value={form.description}
-            onChange={handleChange}
-            className="border p-3 rounded-lg w-full mt-1 focus:ring-2 focus:ring-indigo-400 outline-none"
-          ></textarea>
-        </div>
+        <textarea
+          name="description"
+          placeholder="Description"
+          value={form.description}
+          onChange={handleChange}
+          className="border p-3 rounded-lg w-full mt-4"
+        ></textarea>
 
-        {/* PROGRESS BAR */}
         {loading && (
-          <div className="w-full bg-gray-200 rounded-full h-3 mt-5">
+          <div className="w-full bg-gray-200 rounded-full h-3 mt-4">
             <div
-              className="bg-indigo-600 h-3 rounded-full transition-all duration-300"
+              className="bg-indigo-600 h-3 rounded-full"
               style={{ width: `${progress}%` }}
             ></div>
-            <p className="text-sm text-center mt-1 text-gray-600">
-              Uploading: {progress}%
-            </p>
+            <p className="text-center text-sm mt-1">{progress}% Uploaded</p>
           </div>
         )}
 
         <button
           type="submit"
           disabled={loading}
-          className="mt-8 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-lg font-semibold shadow-lg transition disabled:opacity-50"
+          className="mt-6 w-full bg-indigo-600 text-white py-3 rounded-xl"
         >
-          {loading ? "Uploading Property..." : "Add Property"}
+          {loading ? "Uploading..." : "Add Property"}
         </button>
       </form>
     </div>
