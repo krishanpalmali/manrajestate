@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import router from "./routes/users.routes.js";
 import buyRoute from "./routes/buy.routes.js";
-import sellRoute from "./routes/Sell.routes.js";
+import sellRoute from "./routes/Sell.routes.js";   // agar file ka naam same hai
 import adminRoute from "./routes/admin.routes.js";
 import propertyRoutes from "./routes/property.routes.js";
 import path from "path";
@@ -28,7 +28,7 @@ app.use(cookieParser());
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
+  .catch((err) => console.log("MongoDB Error:", err));
 
 // API routes
 app.use("/api/user", router);
@@ -38,7 +38,7 @@ app.use("/api/sell", sellRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
-// ================= FRONTEND SERVE (RENDER READY) =================
+// ================= FRONTEND SERVE (VITE PROJECT) =================
 const clientPath = path.join(__dirname, "vite project", "dist");
 
 app.use(express.static(clientPath));
