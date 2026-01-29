@@ -14,12 +14,17 @@ export default function AddProperty() {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  // ---------------- FETCH ALL PROPERTIES ----------------
+  /* ---------------- FETCH ALL PROPERTIES ---------------- */
   const fetchProperties = async () => {
     try {
       const res = await fetch("/api/property/all", {
         credentials: "include",
       });
+
+      if (!res.ok) {
+        throw new Error("Unauthorized or fetch failed");
+      }
+
       const data = await res.json();
       setProperties(data);
     } catch (error) {
@@ -31,7 +36,7 @@ export default function AddProperty() {
     fetchProperties();
   }, []);
 
-  // ---------------- ADD PROPERTY ----------------
+  /* ---------------- ADD PROPERTY ---------------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -49,24 +54,23 @@ export default function AddProperty() {
     try {
       setLoading(true);
 
-      // FormData for Multer + Cloudinary
       const formData = new FormData();
       formData.append("title", form.title);
       formData.append("price", form.price);
       formData.append("location", form.location);
       formData.append("description", form.description);
-      formData.append("image", image); // real file
+      formData.append("image", image);
 
       const res = await fetch("/api/property/create", {
         method: "POST",
         credentials: "include",
-        body: formData, // IMPORTANT: no JSON, no headers
+        body: formData,
       });
 
       const result = await res.json();
 
       if (!res.ok) {
-        alert(result.message || "Upload failed");
+        alert(result.message || "Upload failed. Are you admin?");
         return;
       }
 
@@ -89,7 +93,7 @@ export default function AddProperty() {
     }
   };
 
-  // ---------------- DELETE PROPERTY ----------------
+  /* ---------------- DELETE PROPERTY ---------------- */
   const deleteProperty = async (id) => {
     if (!window.confirm("Delete this property?")) return;
 
@@ -102,7 +106,7 @@ export default function AddProperty() {
       const result = await res.json();
 
       if (!res.ok) {
-        alert(result.message || "Delete failed");
+        alert(result.message || "Delete failed. Are you admin?");
         return;
       }
 
@@ -131,6 +135,7 @@ export default function AddProperty() {
           className="border p-2 w-full mb-3"
           required
         />
+
         <input
           name="price"
           placeholder="Price"
@@ -139,6 +144,7 @@ export default function AddProperty() {
           className="border p-2 w-full mb-3"
           required
         />
+
         <input
           name="location"
           placeholder="Location"
@@ -163,11 +169,11 @@ export default function AddProperty() {
           onChange={handleChange}
           className="border p-2 w-full mb-3"
           required
-        ></textarea>
+        />
 
         <button
           disabled={loading}
-          className="bg-indigo-600 text-white px-4 py-2 rounded w-full"
+          className="bg-indigo-600 text-white px-4 py-2 rounded w-full disabled:opacity-60"
         >
           {loading ? "Uploading..." : "Add Property"}
         </button>

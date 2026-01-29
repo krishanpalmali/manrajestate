@@ -16,13 +16,21 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://manrajestate-45.onrender.com"
+];
+
 /* ===================== CORS ===================== */
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://manrajestate-45.onrender.com"
-    ],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );

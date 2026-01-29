@@ -9,8 +9,8 @@ const router = express.Router();
 /* ================= CREATE PROPERTY ================= */
 router.post(
   "/create",
-  upload.single("image"),
-  verifyAdmin,
+  verifyAdmin,                // 🔥 first check admin
+  upload.single("image"),     // 🔥 then upload
   async (req, res) => {
     try {
       const { title, price, location, description } = req.body;
@@ -19,7 +19,7 @@ router.post(
         return res.status(400).json({ message: "All fields are required" });
       }
 
-      // Upload image to Cloudinary (buffer)
+      // Upload image to Cloudinary
       const uploadResult = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: "properties" },
@@ -76,18 +76,15 @@ router.delete("/:id", verifyAdmin, async (req, res) => {
       return res.status(404).json({ message: "Property not found" });
     }
 
-    // Delete image from Cloudinary
+    // Cloudinary public id extract
     const imageUrl = property.image;
     const publicId = imageUrl
       .split("/")
       .slice(-2)
       .join("/")
       .split(".")[0];
-    // Example result: properties/abc123
 
     await cloudinary.uploader.destroy(publicId);
-
-    // Delete from MongoDB
     await Property.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
