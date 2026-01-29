@@ -1,26 +1,7 @@
 {
   "type": "module",
-  "name": "api",
-  "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "build": "npm install && npm install --prifix vite project && npm run build --prefix vite"
-  },
-  "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "cloudinary": "^2.9.0",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "firebase": "^12.8.0",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.1.4",
-    "multer": "^2.0.2"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.11"
+    "build": "npm install --prefix vite-project && npm run build --prefix vite-project",
+    "start": "node api/index.js"
   }
 }
