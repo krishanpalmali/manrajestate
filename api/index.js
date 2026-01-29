@@ -43,12 +43,13 @@ app.use("/api/sell", sellRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
-// ================= FRONTEND SERVE (FINAL FIX) =================
-// React/Vite build root ke dist folder me hai
-const clientPath = path.join(__dirname, "../dist");
+// ================= FRONTEND SERVE (FINAL) =================
+// Frontend folder: "vite project/dist"
+const clientPath = path.join(__dirname, "vite project", "dist");
+
 app.use(express.static(clientPath));
 
-// Sirf non-API routes par React ka index.html bhejo
+// React routing support (non-API routes)
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
