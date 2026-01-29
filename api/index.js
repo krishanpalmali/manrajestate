@@ -1,5 +1,3 @@
-// api/index.js
-
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -18,26 +16,21 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 
-// ================= CORS =================
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  })
-);
+// CORS
+app.use(cors({ origin: true, credentials: true }));
 
-// ================= MIDDLEWARES =================
+// Middlewares
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
-// ================= MONGODB =================
+// MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB connected successfully"))
-  .catch((err) => console.log("MongoDB connection error:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log(err));
 
-// ================= API ROUTES =================
+// API routes
 app.use("/api/user", router);
 app.use("/api/auth", authRouter);
 app.use("/api/buy", buyRoute);
@@ -45,32 +38,26 @@ app.use("/api/sell", sellRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
-// ================= FRONTEND SERVE (FINAL) =================
-// Backend is inside /api
-// Frontend build is in: /vite project/dist
-const clientPath = path.join(__dirname, "../vite project/dist");
+// ================= FRONTEND SERVE (RENDER READY) =================
+const clientPath = path.join(__dirname, "vite project", "dist");
 
 app.use(express.static(clientPath));
 
-// React Router support (only for non-API routes)
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
 
-// ================= ERROR HANDLER =================
+// Error handler
 app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal server error";
-
-  res.status(statusCode).json({
+  res.status(err.statusCode || 500).json({
     success: false,
-    statusCode,
-    message,
+    statusCode: err.statusCode || 500,
+    message: err.message || "Internal server error",
   });
 });
 
-// ================= SERVER =================
+// Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT} 🚀`);
+  console.log(`Server running on port ${PORT} 🚀`);
 });
