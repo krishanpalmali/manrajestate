@@ -19,7 +19,10 @@ const __dirname = path.resolve();
 /* ===================== CORS ===================== */
 app.use(
   cors({
-    origin: "http://localhost:5173",   // Vite frontend
+    origin: [
+      "http://localhost:5173",
+      "https://manraj-real-estate.onrender.com" // apna Render URL yahan daalna
+    ],
     credentials: true,
   })
 );
@@ -44,8 +47,7 @@ app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
 /* ===================== FRONTEND SERVE ===================== */
-// only for production build
-const clientPath = path.join(__dirname, "vite project", "dist");
+const clientPath = path.join(__dirname, "client", "dist");
 app.use(express.static(clientPath));
 
 app.get(/^\/(?!api).*/, (req, res) => {
