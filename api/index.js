@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import router from "./routes/users.routes.js";
 import buyRoute from "./routes/buy.routes.js";
-import sellRoute from "./routes/Sell.routes.js";   // agar file ka naam same hai
+import sellRoute from "./routes/Sell.routes.js";
 import adminRoute from "./routes/admin.routes.js";
 import propertyRoutes from "./routes/property.routes.js";
 import path from "path";
@@ -16,21 +16,26 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 
-// CORS
-app.use(cors({ origin: true, credentials: true }));
+/* ===================== CORS ===================== */
+app.use(
+  cors({
+    origin: "http://localhost:5173",   // Vite frontend
+    credentials: true,
+  })
+);
 
-// Middlewares
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+/* ===================== MIDDLEWARES ===================== */
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// MongoDB
+/* ===================== DATABASE ===================== */
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB connected"))
+  .then(() => console.log("MongoDB connected ✅"))
   .catch((err) => console.log("MongoDB Error:", err));
 
-// API routes
+/* ===================== API ROUTES ===================== */
 app.use("/api/user", router);
 app.use("/api/auth", authRouter);
 app.use("/api/buy", buyRoute);
@@ -38,16 +43,16 @@ app.use("/api/sell", sellRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
-// ================= FRONTEND SERVE (VITE PROJECT) =================
+/* ===================== FRONTEND SERVE ===================== */
+// only for production build
 const clientPath = path.join(__dirname, "vite project", "dist");
-
 app.use(express.static(clientPath));
 
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
 
-// Error handler
+/* ===================== ERROR HANDLER ===================== */
 app.use((err, req, res, next) => {
   res.status(err.statusCode || 500).json({
     success: false,
@@ -56,7 +61,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Server
+/* ===================== SERVER ===================== */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT} 🚀`);

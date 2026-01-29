@@ -14,15 +14,6 @@ export default function AddProperty() {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  // Convert image to base64
-  const convertBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-
   // ---------------- FETCH ALL PROPERTIES ----------------
   const fetchProperties = async () => {
     try {
@@ -58,20 +49,18 @@ export default function AddProperty() {
     try {
       setLoading(true);
 
-      const base64Image = await convertBase64(image);
-
-      const propertyData = {
-        ...form,
-        image: base64Image,
-      };
+      // FormData for Multer + Cloudinary
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("price", form.price);
+      formData.append("location", form.location);
+      formData.append("description", form.description);
+      formData.append("image", image); // real file
 
       const res = await fetch("/api/property/create", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
-        body: JSON.stringify(propertyData),
+        body: formData, // IMPORTANT: no JSON, no headers
       });
 
       const result = await res.json();
