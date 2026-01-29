@@ -21,7 +21,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://manraj-real-estate.onrender.com" // apna Render URL yahan daalna
+      "https://YOUR-PROJECT-NAME.onrender.com"
     ],
     credentials: true,
   })
@@ -47,7 +47,8 @@ app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
 /* ===================== FRONTEND SERVE ===================== */
-const clientPath = path.join(__dirname, "client", "dist");
+/* NOTE: frontend folder name is "vite project" */
+const clientPath = path.join(__dirname, "vite project", "dist");
 app.use(express.static(clientPath));
 
 app.get(/^\/(?!api).*/, (req, res) => {
