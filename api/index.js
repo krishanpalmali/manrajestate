@@ -55,11 +55,10 @@ app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
 /* ===================== FRONTEND SERVE ===================== */
-const clientPath = path.join(__dirname, "..", "vite project", "dist");
-app.use(express.static(clientPath));
+app.use(express.static(path.join(__dirname, "vite project", "dist")));
 
-app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(clientPath, "index.html"));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "vite project", "dist", "index.html"));
 });
 
 /* ===================== ERROR HANDLER ===================== */
