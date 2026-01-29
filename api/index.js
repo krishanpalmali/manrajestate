@@ -1,3 +1,5 @@
+// api/index.js
+
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -44,12 +46,13 @@ app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
 // ================= FRONTEND SERVE (FINAL) =================
-// Frontend folder: "vite project/dist"
-const clientPath = path.join(__dirname, "vite project", "dist");
+// Backend is inside /api
+// Frontend build is in: /vite project/dist
+const clientPath = path.join(__dirname, "../vite project/dist");
 
 app.use(express.static(clientPath));
 
-// React routing support (non-API routes)
+// React Router support (only for non-API routes)
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
