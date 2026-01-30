@@ -1,7 +1,8 @@
 {
-  "type": "module",
+  "name": "fullstack-app",
+  "private": true,
   "scripts": {
-    "build": "npm install --prefix vite-project && npm run build --prefix vite-project",
-    "start": "node api/index.js"
+    "build": "npm install --prefix vite-project && npm run build --prefix vite-project && npm install --prefix api",
+    "start": "npm start --prefix api"
   }
 }
