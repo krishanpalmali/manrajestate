@@ -47,10 +47,7 @@ app.use("/api/property", propertyRoutes);
 const clientPath = path.join(__dirname, "..", "vite-project", "dist");
 app.use(express.static(clientPath));
 
-/**
- * SPA fallback
- * NOTE: /api routes safe rahengi
- */
+/* SPA fallback (API safe) */
 app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
