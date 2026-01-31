@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// routes
+// Routes
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/users.routes.js";
 import buyRoute from "./routes/buy.routes.js";
@@ -18,7 +18,7 @@ dotenv.config();
 
 const app = express();
 
-// __dirname fix for ES module
+/* ===================== __dirname FIX (ESM) ===================== */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -43,12 +43,15 @@ app.use("/api/sell", sellRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/property", propertyRoutes);
 
-/* ===================== SERVE FRONTEND ===================== */
-// root → vite-project/dist
+/* ===================== SERVE FRONTEND (VITE BUILD) ===================== */
 const clientPath = path.join(__dirname, "..", "vite-project", "dist");
 app.use(express.static(clientPath));
 
-app.get("*", (req, res) => {
+/**
+ * SPA fallback
+ * NOTE: /api routes safe rahengi
+ */
+app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
 
@@ -60,7 +63,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-/* ===================== SERVER + DB ===================== */
+/* ===================== SERVER + DATABASE ===================== */
 const PORT = process.env.PORT || 3000;
 
 mongoose
@@ -72,5 +75,5 @@ mongoose
     });
   })
   .catch((err) => {
-    console.error("MongoDB error ❌", err);
+    console.error("MongoDB connection error ❌", err);
   });
