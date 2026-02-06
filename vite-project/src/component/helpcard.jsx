@@ -7,25 +7,23 @@ const HelpCard = () => {
   return (
     <div
       className="
-        absolute z-50
-        bottom-12 left-0 right-0 mx-auto
-
+        absolute z-30
+        bottom-10 left-0 right-0 mx-auto
         w-[92%] max-w-[360px]
 
         md:top-1/2 md:right-20 md:left-auto md:bottom-auto
-        md:-translate-y-1/2 md:translate-x-0
+        md:-translate-y-1/2
 
-        bg-white
-        p-4 sm:p-6
+        bg-white/95 backdrop-blur
+        p-5 sm:p-6
         rounded-2xl
         shadow-2xl
-        border
-        animate-fadeUp
+        border border-gray-200
       "
     >
       {/* Header */}
-      <div className="text-center mb-3 sm:mb-4">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+      <div className="text-center mb-4">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900">
           How Can We Help You?
         </h2>
         <p className="text-xs sm:text-sm text-gray-500 mt-1">
@@ -33,12 +31,12 @@ const HelpCard = () => {
         </p>
 
         {/* Trust Badges */}
-        <div className="flex justify-center gap-3 sm:gap-4 mt-2 sm:mt-3 text-[10px] sm:text-xs text-gray-500">
+        <div className="flex justify-center gap-4 mt-3 text-[11px] sm:text-xs text-gray-500">
           <span className="flex items-center gap-1">
-            <FaShieldAlt className="text-green-600" /> 100% Secure
+            <FaShieldAlt className="text-emerald-600" /> 100% Secure
           </span>
           <span className="flex items-center gap-1">
-            <FaClock className="text-blue-600" /> Quick Support
+            <FaClock className="text-emerald-600" /> Quick Support
           </span>
         </div>
       </div>
@@ -47,52 +45,50 @@ const HelpCard = () => {
       <button
         onClick={() => navigate("/buy")}
         className="
-          w-full mb-2 sm:mb-3
-          px-3 py-2 sm:px-4 sm:py-3
-          text-sm sm:text-base
+          w-full mb-3
+          px-4 py-3
           flex items-center justify-between
           rounded-xl
-          bg-gradient-to-r from-blue-50 to-blue-100
-          border border-blue-200
-          hover:from-blue-100 hover:to-blue-200
+          bg-gradient-to-r from-emerald-50 to-emerald-100
+          border border-emerald-200
+          hover:from-emerald-100 hover:to-emerald-200
           hover:scale-[1.02]
-          transition-all duration-200
+          transition-all
         "
       >
-        <span className="flex items-center gap-2 sm:gap-3 text-gray-800 font-semibold">
-          <FaHome className="text-blue-600 text-base sm:text-lg" />
+        <span className="flex items-center gap-3 text-gray-900 font-semibold">
+          <FaHome className="text-emerald-600 text-lg" />
           I’m Buying
         </span>
-        <span className="text-blue-600 font-bold text-base sm:text-lg">→</span>
+        <span className="text-emerald-600 font-bold text-lg">→</span>
       </button>
 
       {/* SELL */}
       <button
         onClick={() => navigate("/sell")}
         className="
-          w-full mb-3 sm:mb-4
-          px-3 py-2 sm:px-4 sm:py-3
-          text-sm sm:text-base
+          w-full mb-4
+          px-4 py-3
           flex items-center justify-between
           rounded-xl
-          bg-gradient-to-r from-green-50 to-green-100
-          border border-green-200
-          hover:from-green-100 hover:to-green-200
+          bg-gradient-to-r from-[#020617]/5 to-[#0F172A]/10
+          border border-gray-300
+          hover:bg-[#0F172A]/10
           hover:scale-[1.02]
-          transition-all duration-200
+          transition-all
         "
       >
-        <span className="flex items-center gap-2 sm:gap-3 text-gray-800 font-semibold">
-          <FaTag className="text-green-600 text-base sm:text-lg" />
+        <span className="flex items-center gap-3 text-gray-900 font-semibold">
+          <FaTag className="text-[#0F172A] text-lg" />
           I’m Selling
         </span>
-        <span className="text-green-600 font-bold text-base sm:text-lg">→</span>
+        <span className="text-[#0F172A] font-bold text-lg">→</span>
       </button>
 
       {/* Divider */}
-      <div className="flex items-center gap-2 mb-3 sm:mb-4">
+      <div className="flex items-center gap-2 mb-4">
         <div className="flex-1 h-px bg-gray-200"></div>
-        <span className="text-[10px] sm:text-xs text-gray-400">OR</span>
+        <span className="text-[11px] text-gray-400">OR</span>
         <div className="flex-1 h-px bg-gray-200"></div>
       </div>
 
@@ -101,16 +97,15 @@ const HelpCard = () => {
         href="tel:9602273282"
         className="
           w-full
-          bg-gradient-to-r from-red-600 to-red-700
+          bg-gradient-to-r from-emerald-600 to-emerald-700
           text-white
-          px-3 py-2 sm:px-4 sm:py-3
-          text-sm sm:text-base
+          px-4 py-3
           rounded-xl
           flex items-center justify-center gap-2
           font-semibold
-          hover:from-red-700 hover:to-red-800
+          hover:from-emerald-700 hover:to-emerald-800
           hover:scale-[1.02]
-          transition-all duration-200
+          transition-all
         "
       >
         <FaPhone />
@@ -118,7 +113,7 @@ const HelpCard = () => {
       </a>
 
       {/* Footer */}
-      <p className="text-[10px] sm:text-[11px] text-center text-gray-400 mt-2 sm:mt-3">
+      <p className="text-[11px] text-center text-gray-400 mt-3">
         Trusted by 500+ clients • Transparent deals • Fast response
       </p>
     </div>

@@ -9,14 +9,34 @@ const router = express.Router();
 /* ================= CREATE PROPERTY ================= */
 router.post(
   "/create",
-  verifyAdmin,                // 🔥 first check admin
-  upload.single("image"),     // 🔥 then upload
+  verifyAdmin,
+  upload.single("image"),
   async (req, res) => {
     try {
-      const { title, price, location, description } = req.body;
+      const {
+        title,
+        price,
+        location,
+        description,
+        propertyType,
+        purpose,
+        area,
+        bedrooms,
+        bathrooms,
+      } = req.body;
 
-      if (!title || !price || !location || !description || !req.file) {
-        return res.status(400).json({ message: "All fields are required" });
+      if (
+        !title ||
+        !price ||
+        !location ||
+        !description ||
+        !propertyType ||
+        !purpose ||
+        !req.file
+      ) {
+        return res.status(400).json({
+          message: "Required fields are missing",
+        });
       }
 
       // Upload image to Cloudinary
@@ -37,6 +57,11 @@ router.post(
         location,
         description,
         image: uploadResult.secure_url,
+        propertyType,
+        purpose,
+        area,
+        bedrooms,
+        bathrooms,
       });
 
       await property.save();
@@ -67,6 +92,26 @@ router.get("/all", async (req, res) => {
   }
 });
 
+/* ================= GET SINGLE PROPERTY (VIEW PAGE) ================= */
+router.get("/:id", async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+
+    if (!property) {
+      return res.status(404).json({
+        message: "Property not found",
+      });
+    }
+
+    res.status(200).json(property);
+  } catch (error) {
+    console.log("Fetch single property error:", error);
+    res.status(500).json({
+      message: "Failed to fetch property",
+    });
+  }
+});
+
 /* ================= DELETE PROPERTY ================= */
 router.delete("/:id", verifyAdmin, async (req, res) => {
   try {
@@ -76,7 +121,7 @@ router.delete("/:id", verifyAdmin, async (req, res) => {
       return res.status(404).json({ message: "Property not found" });
     }
 
-    // Cloudinary public id extract
+    // Extract Cloudinary public ID
     const imageUrl = property.image;
     const publicId = imageUrl
       .split("/")

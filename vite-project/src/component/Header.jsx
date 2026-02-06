@@ -1,157 +1,158 @@
-// src/components/Header.jsx
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-import logo from "../assets/logo.png";
 import defaultAvatar from "../assets/avatar.png";
-import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
+import { FaSearch, FaBars, FaTimes } from "react-icons/fa";
 
 const Header = () => {
   const { currentUser } = useSelector((state) => state.user);
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  return (
-    <header className="sticky top-0 z-50 bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center gap-3">
-          <img
-            src={logo}
-            alt="Manraj Estate Logo"
-            className="w-12 h-auto rounded-md bg-gray-100 p-1"
-          />
-          <h1 className="text-lg font-semibold text-gray-800 hidden sm:block">
-            Manraj Estate
-          </h1>
-        </div>
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-6">
-          <Link to="/" className="nav-link">
-            Home
-          </Link>
-          <Link to="/about" className="nav-link">
-            About
-          </Link>
-          <Link to="/information" className="nav-link">
-            Information
-          </Link>
-          <Link to="/contact" className="nav-link">
-            Contact
-          </Link>
+  return (
+    <header
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-[#020617]/95 backdrop-blur-md shadow-2xl"
+          : "bg-[#0F172A]/70 backdrop-blur-sm border-b border-white/10"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+        {/* LEFT SPACE (nav ko thoda right lane ke liye) */}
+        <div className="hidden md:block w-32"></div>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-10 font-medium">
+          {[
+            { name: "Home", path: "/" },
+            { name: "About", path: "/about" },
+            { name: "Information", path: "/information" },
+            { name: "Contact", path: "/contact" },
+          ].map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `relative pb-1 transition-all duration-300 ${
+                  isActive
+                    ? "text-emerald-400 after:w-full"
+                    : "text-gray-300 hover:text-emerald-300 after:w-0"
+                }
+                after:content-[''] after:absolute after:left-0 after:-bottom-1
+                after:h-[2px] after:bg-emerald-400 after:transition-all`
+              }
+            >
+              {item.name}
+            </NavLink>
+          ))}
         </nav>
 
-        {/* Right Section */}
-        <div className="flex items-center gap-4">
+        {/* RIGHT SECTION (Desktop) */}
+        <div className="hidden md:flex items-center gap-5">
+
           {/* Search */}
-          <div className="hidden sm:flex items-center relative">
-            <FaSearch className="absolute left-3 text-gray-400 text-sm" />
+          <div className="relative">
+            <FaSearch className="absolute left-3 top-3 text-sm text-gray-400" />
             <input
               type="text"
               placeholder="Search properties..."
-              className="pl-9 pr-3 py-1.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="
+                pl-9 pr-4 py-2 rounded-full text-sm
+                bg-white/10 text-white placeholder-gray-400
+                border border-white/20
+                focus:outline-none focus:ring-2 focus:ring-emerald-400
+              "
             />
           </div>
 
-          {/* Auth / Profile */}
+          {/* Auth */}
           {currentUser ? (
             <Link to="/profile">
               <img
                 src={currentUser.avatar || currentUser.photo || defaultAvatar}
                 alt="profile"
-                className="w-9 h-9 rounded-full object-cover border-2 border-blue-600 cursor-pointer"
+                className="w-10 h-10 rounded-full object-cover border-2 border-emerald-400"
               />
             </Link>
           ) : (
-            <div className="hidden sm:flex items-center gap-2">
+            <>
               <Link
                 to="/sign-in"
-                className="px-3 py-1.5 text-sm border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50"
+                className="
+                  px-4 py-2 rounded-full text-sm
+                  border border-emerald-400 text-emerald-400
+                  hover:bg-emerald-400 hover:text-black transition
+                "
               >
                 Sign In
               </Link>
               <Link
                 to="/sign-up"
-                className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="
+                  px-4 py-2 rounded-full text-sm
+                  bg-emerald-500 text-black
+                  hover:bg-emerald-600 transition shadow-lg
+                "
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Toggle Button (Mobile) */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="md:hidden text-2xl text-white"
+        >
+          {menuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="md:hidden bg-[#020617] px-6 py-6 space-y-6">
+          {[
+            { name: "Home", path: "/" },
+            { name: "About", path: "/about" },
+            { name: "Information", path: "/information" },
+            { name: "Contact", path: "/contact" },
+          ].map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={() => setMenuOpen(false)}
+              className="block text-center text-gray-200 text-lg font-medium hover:text-emerald-400"
+            >
+              {item.name}
+            </NavLink>
+          ))}
+
+          {!currentUser && (
+            <div className="pt-4 flex gap-4">
+              <Link
+                to="/sign-in"
+                onClick={() => setMenuOpen(false)}
+                className="w-full text-center border border-emerald-400 text-emerald-400 py-2 rounded-full"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/sign-up"
+                onClick={() => setMenuOpen(false)}
+                className="w-full text-center bg-emerald-500 text-black py-2 rounded-full"
               >
                 Sign Up
               </Link>
             </div>
           )}
-
-          {/* Toggle Button */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden text-gray-700 text-xl focus:outline-none"
-          >
-            {menuOpen ? <FaTimes /> : <FaBars />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-white shadow-lg border-t">
-          <nav className="flex flex-col p-4 gap-3">
-            <Link
-              to="/"
-              onClick={() => setMenuOpen(false)}
-              className="mobile-link"
-            >
-              Home
-            </Link>
-            <Link
-              to="/about"
-              onClick={() => setMenuOpen(false)}
-              className="mobile-link"
-            >
-              About
-            </Link>
-            <Link
-              to="/information"
-              onClick={() => setMenuOpen(false)}
-              className="mobile-link"
-            >
-              Information
-            </Link>
-            <Link
-              to="/contact"
-              onClick={() => setMenuOpen(false)}
-              className="mobile-link"
-            >
-              Contact
-            </Link>
-
-            {/* Mobile Search */}
-            <div className="relative mt-3">
-              <FaSearch className="absolute left-3 top-2.5 text-gray-400 text-sm" />
-              <input
-                type="text"
-                placeholder="Search properties..."
-                className="w-full pl-9 pr-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Mobile Auth */}
-            {!currentUser && (
-              <div className="flex gap-2 mt-3">
-                <Link
-                  to="/sign-in"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex-1 text-center py-2 border border-blue-600 text-blue-600 rounded-md"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/sign-up"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex-1 text-center py-2 bg-blue-600 text-white rounded-md"
-                >
-                  Sign Up
-                </Link>
-              </div>
-            )}
-          </nav>
         </div>
       )}
     </header>
@@ -159,15 +160,3 @@ const Header = () => {
 };
 
 export default Header;
-
-/* Global CSS (or Tailwind layer)
-
-.nav-link {
-  @apply text-gray-700 font-medium hover:text-blue-600 transition;
-}
-
-.mobile-link {
-  @apply text-gray-700 font-medium py-2 border-b border-gray-200;
-}
-
-*/

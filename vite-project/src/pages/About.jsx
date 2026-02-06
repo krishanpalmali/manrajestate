@@ -1,170 +1,257 @@
-// src/pages/About.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
+import manrajVideo from "../assets/manraj-estate.mp4";
+import logo from "../assets/logo121.png";
+
+/* ------------------ DATA ------------------ */
+const growthData = [
+  { year: "2022", deals: 40 },
+  { year: "2023", deals: 75 },
+  { year: "2024", deals: 120 },
+  { year: "2025", deals: 180 },
+];
+
+const buySellData = [
+  { name: "Buy", value: 65 },
+  { name: "Sell", value: 35 },
+];
 
 const About = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 py-16 px-4 sm:px-10 md:px-20">
+    <div className="w-full bg-white">
 
-      {/* Hero Section */}
-      <div className="text-center mb-6">
-        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900">
-          Turning Your Dream Property Into Reality
+      {/* ================= HERO ================= */}
+      <section className="bg-gradient-to-br from-gray-50 to-white px-6 md:px-20 pt-28 pb-24 text-center">
+        <img src={logo} alt="Manraj Estate" className="w-20 mx-auto mb-6" />
+
+        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
+          About <span className="text-emerald-600">Manraj Estate</span>
         </h1>
-        <p className="mt-4 text-lg text-gray-600 max-w-4xl mx-auto">
-          At <span className="font-semibold text-black">Manraj Estate</span>, we deal in all types of properties –
-          <span className="font-semibold text-black">
-            {" "}Homes, Agricultural Land, Plots, Shops, and Commercial Properties.
-          </span>
-          <br />
-          We don’t just sell properties, we build trust, confidence, and lifelong relationships.
-          Your dream, our commitment.
+
+        <p className="mt-6 text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
+          Manraj Estate is a trusted real estate consultancy based in
+          <span className="font-semibold text-gray-900"> Abu Road</span>,
+          helping buyers, sellers, and investors make confident property decisions.
         </p>
 
-        {/* Quick Trust Line */}
-        <p className="mt-4 text-sm text-gray-500">
-          ✔ Verified Properties | ✔ Legal Support | ✔ 100% Transparency | ✔ Trusted by 500+ Clients
+        <p className="mt-6 text-sm text-gray-500">
+          Verified Properties • Transparent Deals • Local Expertise • Client First
         </p>
-      </div>
+      </section>
 
-      {/* Main Story */}
-      <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
-        <div>
-          <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-            Why Manraj Estate?
-          </h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            Buying or selling a property is one of the most important decisions of life.
-            That’s why Manraj Estate is built on honesty, transparency, and dedication.
-            We ensure every deal is smooth, secure, and profitable for you.
-          </p>
-          <p className="text-gray-600 leading-relaxed">
-            Whether you are looking for a dream home, fertile agricultural land, a residential plot,
-            a running shop, or a commercial property for business, Manraj Estate is your one-stop destination.
-            We provide genuine listings and the best guidance for every type of property.
-          </p>
+      {/* ================= WHO WE ARE ================= */}
+      <section className="px-6 md:px-20 py-24">
+        <div className="grid md:grid-cols-2 gap-16 items-center">
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              Who We Are
+            </h2>
+            <p className="text-gray-600 leading-relaxed mb-5">
+              Manraj Estate was founded with a clear purpose —
+              to simplify real estate transactions while maintaining complete honesty
+              and transparency.
+            </p>
+            <p className="text-gray-600 leading-relaxed">
+              We deal in residential homes, agricultural land, plots, shops,
+              and commercial properties. Our deep understanding of the
+              Abu Road market allows us to guide clients with confidence.
+            </p>
+          </div>
+
+          <div className="rounded-3xl overflow-hidden shadow-xl bg-black">
+            <video className="w-full h-full object-cover" controls playsInline>
+              <source src={manrajVideo} type="video/mp4" />
+            </video>
+          </div>
         </div>
+      </section>
 
-        <div>
-          <img
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80"
-            alt="Dream Property"
-            className="rounded-xl shadow-xl"
-          />
-        </div>
-      </div>
-
-      {/* Property Types */}
-      <div className="mb-20">
-        <h2 className="text-3xl font-bold text-center mb-10">
-          Property Types We Deal In
+      {/* ================= WHY CHOOSE MANRAJ ESTATE ================= */}
+      <section className="bg-gray-50 py-24 px-6 md:px-20">
+        <h2 className="text-4xl font-bold text-center text-blue-600 mb-16">
+          Why Choose Manraj Estate
         </h2>
 
-        <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-6 text-center">
-          {["🏡 Homes", "🌾 Agricultural Land", "📐 Plots", "🏪 Shops", "🏢 Commercial Property"].map(
-            (item, index) => (
+        <div className="grid lg:grid-cols-2 gap-14 items-start max-w-7xl mx-auto">
+          {/* LEFT */}
+          <div className="space-y-6">
+            {[
+              {
+                title: "Property Listings",
+                desc: "Extensive database of residential, commercial, plots, agricultural land, and luxury properties tailored to your needs.",
+              },
+              {
+                title: "Expert Advisory",
+                desc: "Experienced consultants providing guidance on pricing, market trends, and legal documentation.",
+              },
+              {
+                title: "Technology-Driven Solutions",
+                desc: "Verified listings and transparent processes using modern tools.",
+              },
+              {
+                title: "End-to-End Services",
+                desc: "Complete support from property selection to registration and legal assistance.",
+              },
+            ].map((item, i) => (
               <div
-                key={index}
-                className="bg-white p-5 rounded-xl shadow font-semibold hover:shadow-xl transition"
+                key={i}
+                className="bg-white rounded-xl shadow-sm p-6 flex gap-4 hover:shadow-md transition"
               >
-                {item}
+                <span className="text-blue-600 text-2xl font-bold">→</span>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-600 mt-1">
+                    {item.desc}
+                  </p>
+                </div>
               </div>
-            )
-          )}
-        </div>
-      </div>
+            ))}
+          </div>
 
-      {/* Mission + Vision */}
-      <div className="bg-white rounded-2xl shadow-lg p-10 mb-20">
-        <div className="grid md:grid-cols-2 gap-10">
+          {/* RIGHT */}
+          <div className="space-y-6">
+            <div className="rounded-2xl overflow-hidden shadow-lg">
+              <img
+                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+                alt="Manraj Estate Property"
+                className="w-full h-[320px] object-cover"
+              />
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm p-8">
+              <h3 className="text-2xl font-bold text-blue-600 mb-2">
+                Our Legacy
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Years of trust, transparency, and customer satisfaction define
+                Manraj Estate.
+              </p>
+
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="bg-blue-50 rounded-lg py-4">
+                  <h4 className="text-2xl font-bold text-blue-600">13+</h4>
+                  <p className="text-sm text-gray-600">Years</p>
+                </div>
+                <div className="bg-blue-50 rounded-lg py-4">
+                  <h4 className="text-2xl font-bold text-blue-600">5★</h4>
+                  <p className="text-sm text-gray-600">Rating</p>
+                </div>
+                <div className="bg-blue-50 rounded-lg py-4">
+                  <h4 className="text-2xl font-bold text-blue-600">1000+</h4>
+                  <p className="text-sm text-gray-600">Deals</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= VISION & MISSION ================= */}
+      <section className="bg-gray-50 py-24 px-6 md:px-20">
+        <div className="grid md:grid-cols-2 gap-16">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-3">
-              Our Mission
-            </h2>
+            <h3 className="text-2xl font-semibold mb-4">Our Vision</h3>
             <p className="text-gray-600 leading-relaxed">
-              To make property buying and selling simple, transparent, and trustworthy.
-              We aim to give every client the confidence that they are making the right decision.
+              To become the most trusted real estate partner in Abu Road by
+              delivering ethical, transparent, and value-driven property solutions.
             </p>
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-3">
-              Our Vision
-            </h2>
+            <h3 className="text-2xl font-semibold mb-4">Our Mission</h3>
             <p className="text-gray-600 leading-relaxed">
-              To become the most trusted real estate platform where people come not just for properties,
-              but for peace of mind and long-term satisfaction.
+              To connect genuine buyers and sellers with verified properties,
+              while offering expert guidance from first inquiry to final registration.
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* FAQ Section */}
-      <div className="mb-20">
-        <h2 className="text-3xl font-bold text-center mb-10">
-          Frequently Asked Questions
-        </h2>
+      {/* ================= STATS ================= */}
+      <section className="px-6 md:px-20 py-24">
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {[
+            { title: "10+ Years", desc: "Industry Experience" },
+            { title: "500+ Clients", desc: "Happy Customers" },
+            { title: "1000+ Deals", desc: "Closed Successfully" },
+            { title: "100%", desc: "Verified Listings" },
+          ].map((item, i) => (
+            <div key={i} className="bg-white rounded-2xl p-8 shadow-md">
+              <h3 className="text-3xl font-bold text-emerald-600">
+                {item.title}
+              </h3>
+              <p className="mt-2 text-gray-600 font-medium">
+                {item.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="font-semibold text-lg">Are all properties verified?</h3>
-            <p className="text-gray-600 mt-2">
-              Yes, every property listed on Manraj Estate is verified with legal documents and ownership details.
-            </p>
+      {/* ================= MARKET INSIGHTS ================= */}
+      <section className="bg-[#f5f6f8] py-24">
+        <div className="max-w-7xl mx-auto px-6 space-y-14">
+          <div className="bg-white rounded-xl shadow-sm p-8">
+            <h3 className="text-xl font-semibold mb-4">Company Growth</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={growthData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="year" />
+                <YAxis />
+                <Tooltip />
+                <Line dataKey="deals" stroke="#059669" strokeWidth={3} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="font-semibold text-lg">Do you help with legal documentation?</h3>
-            <p className="text-gray-600 mt-2">
-              Yes, we provide complete support for agreements, registry, and legal paperwork.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="font-semibold text-lg">Do you deal in agricultural land and plots?</h3>
-            <p className="text-gray-600 mt-2">
-              Absolutely. We deal in homes, agricultural land, plots, shops, and commercial properties.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="font-semibold text-lg">Are there any hidden charges?</h3>
-            <p className="text-gray-600 mt-2">
-              No, we believe in complete transparency. There are no hidden costs.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="font-semibold text-lg">How do I get started?</h3>
-            <p className="text-gray-600 mt-2">
-              Just click on “Get Started Today” and explore properties or contact us for guidance.
-            </p>
+          <div className="bg-white rounded-xl shadow-sm p-8">
+            <h3 className="text-xl font-semibold mb-4">Buy vs Sell Ratio</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={buySellData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#16a34a" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Call To Action */}
-      <div className="bg-black text-white rounded-2xl p-10 text-center">
-        <h2 className="text-3xl font-bold mb-4">
-          Ready to Find Your Perfect Property?
-        </h2>
-        <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-          Whether you are buying your first home or investing in land or commercial property,
-          Manraj Estate is here to guide you with honesty and transparency.
-        </p>
-        <button
-          onClick={() => navigate("/")}
-          className="bg-white text-black px-10 py-3 rounded-full font-semibold hover:bg-gray-200 hover:scale-105 transition-transform"
-        >
-          Get Started Today
-        </button>
-
-        <p className="mt-4 text-sm text-gray-400">
-          🔒 Your information is safe with us. We respect your privacy.
-        </p>
-      </div>
+      {/* ================= FINAL CTA ================= */}
+      <section className="px-6 md:px-20 py-24">
+        <div className="bg-gradient-to-r from-black to-gray-900 text-white rounded-3xl p-14 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Let’s Find the Right Property Together
+          </h2>
+          <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
+            Whether you’re buying, selling, or investing — Manraj Estate is here
+            to guide you every step of the way.
+          </p>
+          <button
+            onClick={() => navigate("/contact")}
+            className="bg-white text-black px-10 py-3 rounded-full font-semibold"
+          >
+            Contact Manraj Estate
+          </button>
+        </div>
+      </section>
 
     </div>
   );

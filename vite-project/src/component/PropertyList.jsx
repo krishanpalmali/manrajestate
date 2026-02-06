@@ -1,47 +1,79 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 const PropertyList = () => {
   const [properties, setProperties] = useState([]);
   const [expanded, setExpanded] = useState(null);
+  const sliderRef = useRef(null);
 
+  /* FETCH PROPERTIES */
   useEffect(() => {
     const fetchProperties = async () => {
       try {
         const res = await axios.get("/api/property/all", {
           withCredentials: true,
         });
-        setProperties(res.data);
+        setProperties(Array.isArray(res.data) ? res.data : []);
       } catch (error) {
         console.log("Fetch error:", error);
       }
     };
-
     fetchProperties();
   }, []);
+
+  /* AUTO SLIDE */
+  useEffect(() => {
+    const slider = sliderRef.current;
+    if (!slider || properties.length === 0) return;
+
+    const interval = setInterval(() => {
+      slider.scrollBy({
+        left: 320,
+        behavior: "smooth",
+      });
+
+      // loop back
+      if (
+        slider.scrollLeft + slider.clientWidth >=
+        slider.scrollWidth - 10
+      ) {
+        slider.scrollTo({ left: 0, behavior: "smooth" });
+      }
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [properties]);
 
   const toggleReadMore = (id) => {
     setExpanded(expanded === id ? null : id);
   };
 
+  if (properties.length === 0) return null;
+
   return (
-    <div className="px-6 py-10 bg-gray-50">
-      <h2 className="text-3xl font-bold text-center mb-8">
+    <div className="px-6 py-14 bg-gray-50">
+      <h2 className="text-3xl font-bold text-center mb-10">
         Available Properties
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* SLIDER */}
+      <div
+        ref={sliderRef}
+        className="flex gap-6 overflow-x-auto scrollbar-hide max-w-7xl mx-auto"
+      >
         {properties.map((p) => (
           <div
             key={p._id}
-            className="bg-white rounded-lg shadow-md overflow-hidden"
+            className="min-w-[300px] bg-white rounded-lg shadow-md overflow-hidden"
           >
-            {/* Cloudinary image direct URL */}
-            <img
-              src={p.image}
-              alt={p.title}
-              className="h-48 w-full object-cover"
-            />
+            {/* IMAGE */}
+            {p.image && (
+              <img
+                src={p.image}
+                alt={p.title}
+                className="h-48 w-full object-cover"
+              />
+            )}
 
             <div className="p-4">
               <h3 className="text-xl font-semibold">{p.title}</h3>
@@ -55,7 +87,6 @@ const PropertyList = () => {
                   : `${p.description.slice(0, 80)}...`}
               </p>
 
-              {/* READ MORE / READ LESS */}
               <button
                 onClick={() => toggleReadMore(p._id)}
                 className="mt-2 text-indigo-600 font-semibold hover:underline"
