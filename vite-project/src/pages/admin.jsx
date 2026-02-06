@@ -1,4 +1,3 @@
-// src/pages/Admin.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -18,20 +17,23 @@ const Admin = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 HIDE NAVBAR ON ADMIN PAGE
+  // 🔒 HIDE HEADER & FOOTER (ADMIN PAGE)
   useEffect(() => {
     const header = document.querySelector("header");
+    const footer = document.querySelector("footer");
+
     if (header) header.style.display = "none";
+    if (footer) footer.style.display = "none";
 
     return () => {
       if (header) header.style.display = "block";
+      if (footer) footer.style.display = "block";
     };
   }, []);
 
   useEffect(() => {
-    Promise.all([fetchBuyData(), fetchSellData(), fetchProperties()]).finally(
-      () => setLoading(false)
-    );
+    Promise.all([fetchBuyData(), fetchSellData(), fetchProperties()])
+      .finally(() => setLoading(false));
   }, []);
 
   // ================= FETCH FUNCTIONS =================
@@ -142,8 +144,8 @@ const Admin = () => {
         </ResponsiveContainer>
       </div>
 
-      {/* TABLES (same as your code, unchanged) */}
-      {/* Buy & Sell tables remain exactly same */}
+      {/* TABLES */}
+      {/* Buy & Sell tables – same as your existing implementation */}
     </div>
   );
 };
