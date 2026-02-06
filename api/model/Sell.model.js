@@ -7,17 +7,20 @@ const sellSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
     phone: {
       type: String,
       required: true,
+      trim: true,
     },
+
     email: {
       type: String,
-      required: true,
       lowercase: true,
       trim: true,
       match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
     },
+
     propertyType: {
       type: String,
       required: true,
@@ -26,15 +29,12 @@ const sellSchema = new mongoose.Schema(
         "Apartment",
         "Flat",
         "Independent House",
-        "House",
         "Villa",
         "Duplex",
         "Studio Apartment",
         "Row House",
         "Farm House",
         "Plot / Land",
-        "Plot",
-        "Land",
 
         // Commercial
         "Commercial Shop",
@@ -61,17 +61,22 @@ const sellSchema = new mongoose.Schema(
         "Land for Development",
       ],
     },
+
     price: {
-      type: String ,
+      type: String,
       required: true,
+      trim: true,
     },
+
     location: {
       type: String,
       required: true,
       trim: true,
     },
+
     description: {
       type: String,
+      trim: true,
     },
   },
   { timestamps: true }

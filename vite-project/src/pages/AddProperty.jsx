@@ -6,7 +6,13 @@ export default function AddProperty() {
     price: "",
     location: "",
     description: "",
+    propertyType: "",
+    purpose: "",
+    area: "",
+    bedrooms: "",
+    bathrooms: "",
   });
+
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState([]);
@@ -20,11 +26,6 @@ export default function AddProperty() {
       const res = await fetch("/api/property/all", {
         credentials: "include",
       });
-
-      if (!res.ok) {
-        throw new Error("Unauthorized or fetch failed");
-      }
-
       const data = await res.json();
       setProperties(data);
     } catch (error) {
@@ -41,13 +42,12 @@ export default function AddProperty() {
     e.preventDefault();
 
     if (!image) {
-      alert("Please select an image first");
+      alert("Please select an image");
       return;
     }
 
-    // 5MB limit
     if (image.size > 5 * 1024 * 1024) {
-      alert("Image size must be less than 5MB");
+      alert("Image must be less than 5MB");
       return;
     }
 
@@ -55,10 +55,9 @@ export default function AddProperty() {
       setLoading(true);
 
       const formData = new FormData();
-      formData.append("title", form.title);
-      formData.append("price", form.price);
-      formData.append("location", form.location);
-      formData.append("description", form.description);
+      Object.entries(form).forEach(([key, value]) =>
+        formData.append(key, value)
+      );
       formData.append("image", image);
 
       const res = await fetch("/api/property/create", {
@@ -70,17 +69,22 @@ export default function AddProperty() {
       const result = await res.json();
 
       if (!res.ok) {
-        alert(result.message || "Upload failed. Are you admin?");
+        alert(result.message || "Upload failed");
         return;
       }
 
-      alert("Property Added Successfully 🎉");
+      alert("✅ Property Added Successfully");
 
       setForm({
         title: "",
         price: "",
         location: "",
         description: "",
+        propertyType: "",
+        purpose: "",
+        area: "",
+        bedrooms: "",
+        bathrooms: "",
       });
       setImage(null);
 
@@ -103,23 +107,19 @@ export default function AddProperty() {
         credentials: "include",
       });
 
-      const result = await res.json();
-
       if (!res.ok) {
-        alert(result.message || "Delete failed. Are you admin?");
+        alert("Delete failed");
         return;
       }
 
-      alert("Property Deleted");
       setProperties((prev) => prev.filter((p) => p._id !== id));
     } catch (error) {
       console.log(error);
-      alert("Delete error");
     }
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6">
       {/* ADD FORM */}
       <form
         onSubmit={handleSubmit}
@@ -127,32 +127,48 @@ export default function AddProperty() {
       >
         <h2 className="text-xl font-bold mb-4 text-center">Add Property</h2>
 
-        <input
-          name="title"
-          placeholder="Title"
-          value={form.title}
-          onChange={handleChange}
-          className="border p-2 w-full mb-3"
-          required
-        />
+        {[
+          ["title", "Title"],
+          ["price", "Price"],
+          ["location", "Location"],
+          ["area", "Area (sq ft)"],
+          ["bedrooms", "Bedrooms"],
+          ["bathrooms", "Bathrooms"],
+        ].map(([name, label]) => (
+          <input
+            key={name}
+            name={name}
+            placeholder={label}
+            value={form[name]}
+            onChange={handleChange}
+            className="border p-2 w-full mb-3"
+          />
+        ))}
 
-        <input
-          name="price"
-          placeholder="Price"
-          value={form.price}
+        <select
+          name="propertyType"
+          value={form.propertyType}
           onChange={handleChange}
           className="border p-2 w-full mb-3"
           required
-        />
+        >
+          <option value="">Select Property Type</option>
+          <option value="Plot">Plot</option>
+          <option value="House">House</option>
+          <option value="Flat">Flat</option>
+        </select>
 
-        <input
-          name="location"
-          placeholder="Location"
-          value={form.location}
+        <select
+          name="purpose"
+          value={form.purpose}
           onChange={handleChange}
           className="border p-2 w-full mb-3"
           required
-        />
+        >
+          <option value="">Select Purpose</option>
+          <option value="Sell">Sell</option>
+          <option value="Rent">Rent</option>
+        </select>
 
         <input
           type="file"
@@ -180,37 +196,27 @@ export default function AddProperty() {
       </form>
 
       {/* PROPERTY LIST */}
-      <div>
-        <h2 className="text-2xl font-bold mb-4 text-center">
-          Existing Properties
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {properties.map((p) => (
-            <div
-              key={p._id}
-              className="bg-white rounded-lg shadow overflow-hidden"
-            >
-              <img
-                src={p.image}
-                alt={p.title}
-                className="h-40 w-full object-cover"
-              />
-              <div className="p-3">
-                <h3 className="font-semibold">{p.title}</h3>
-                <p className="text-sm text-gray-600">📍 {p.location}</p>
-                <p className="text-green-600 font-bold">₹ {p.price}</p>
-
-                <button
-                  onClick={() => deleteProperty(p._id)}
-                  className="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded w-full"
-                >
-                  🗑 Delete
-                </button>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {properties.map((p) => (
+          <div key={p._id} className="bg-white rounded shadow">
+            <img
+              src={p.image}
+              alt={p.title}
+              className="h-40 w-full object-cover"
+            />
+            <div className="p-3">
+              <h3 className="font-semibold">{p.title}</h3>
+              <p>📍 {p.location}</p>
+              <p className="text-green-600 font-bold">₹ {p.price}</p>
+              <button
+                onClick={() => deleteProperty(p._id)}
+                className="mt-2 bg-red-500 text-white px-3 py-1 rounded w-full"
+              >
+                🗑 Delete
+              </button>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
