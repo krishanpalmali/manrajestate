@@ -17,6 +17,20 @@ export default function AddProperty() {
   const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState([]);
 
+  // 🔒 HIDE HEADER & FOOTER (ADMIN PAGE)
+  useEffect(() => {
+    const header = document.querySelector("header");
+    const footer = document.querySelector("footer");
+
+    if (header) header.style.display = "none";
+    if (footer) footer.style.display = "none";
+
+    return () => {
+      if (header) header.style.display = "block";
+      if (footer) footer.style.display = "block";
+    };
+  }, []);
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -27,7 +41,7 @@ export default function AddProperty() {
         credentials: "include",
       });
       const data = await res.json();
-      setProperties(data);
+      setProperties(data || []);
     } catch (error) {
       console.log("Fetch error:", error);
     }
@@ -119,13 +133,15 @@ export default function AddProperty() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="min-h-screen bg-gray-100 p-6">
       {/* ADD FORM */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow mb-10"
+        className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow mb-10"
       >
-        <h2 className="text-xl font-bold mb-4 text-center">Add Property</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-indigo-600">
+          ➕ Add Property
+        </h2>
 
         {[
           ["title", "Title"],
@@ -141,7 +157,7 @@ export default function AddProperty() {
             placeholder={label}
             value={form[name]}
             onChange={handleChange}
-            className="border p-2 w-full mb-3"
+            className="border p-2 w-full mb-3 rounded"
           />
         ))}
 
@@ -149,7 +165,7 @@ export default function AddProperty() {
           name="propertyType"
           value={form.propertyType}
           onChange={handleChange}
-          className="border p-2 w-full mb-3"
+          className="border p-2 w-full mb-3 rounded"
           required
         >
           <option value="">Select Property Type</option>
@@ -162,7 +178,7 @@ export default function AddProperty() {
           name="purpose"
           value={form.purpose}
           onChange={handleChange}
-          className="border p-2 w-full mb-3"
+          className="border p-2 w-full mb-3 rounded"
           required
         >
           <option value="">Select Purpose</option>
@@ -174,7 +190,7 @@ export default function AddProperty() {
           type="file"
           accept="image/*"
           onChange={(e) => setImage(e.target.files[0])}
-          className="border p-2 w-full mb-3"
+          className="border p-2 w-full mb-3 rounded"
           required
         />
 
@@ -183,7 +199,7 @@ export default function AddProperty() {
           placeholder="Description"
           value={form.description}
           onChange={handleChange}
-          className="border p-2 w-full mb-3"
+          className="border p-2 w-full mb-4 rounded"
           required
         />
 
@@ -196,7 +212,7 @@ export default function AddProperty() {
       </form>
 
       {/* PROPERTY LIST */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
         {properties.map((p) => (
           <div key={p._id} className="bg-white rounded shadow">
             <img

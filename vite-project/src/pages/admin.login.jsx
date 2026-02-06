@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { signInSuccess } from "../redux/user/userSlice";
@@ -8,6 +8,20 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // 🔒 Hide Navbar & Footer on Admin Login
+  useEffect(() => {
+    const header = document.querySelector("header");
+    const footer = document.querySelector("footer");
+
+    if (header) header.style.display = "none";
+    if (footer) footer.style.display = "none";
+
+    return () => {
+      if (header) header.style.display = "block";
+      if (footer) footer.style.display = "block";
+    };
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -20,59 +34,86 @@ const AdminLogin = () => {
         body: JSON.stringify({ email, password }),
       });
 
-      console.log("Status:", res.status);
-
-      // ❗ Pehle check karo response OK hai ya nahi
       if (!res.ok) {
-        const text = await res.text(); // JSON na bhi ho sakta hai
-        throw new Error(text || "Login failed");
+        const text = await res.text();
+        throw new Error(text || "Invalid credentials");
       }
 
-      // Ab safe hai JSON parse karna
       const data = await res.json();
-      console.log("Response:", data);
-
       dispatch(signInSuccess(data.admin));
       navigate("/admin");
     } catch (err) {
       console.error("Login error:", err);
-      alert(err.message || "Server not reachable");
+      alert(err.message || "Server error");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white p-6 rounded shadow w-full max-w-sm"
-      >
-        <h2 className="text-2xl font-bold mb-4 text-center">Admin Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+      <div className="w-full max-w-sm bg-white rounded-xl shadow-lg border border-gray-200">
+        {/* HEADER */}
+        <div className="border-b px-6 py-4 text-center">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Admin Panel Login
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Authorized access only
+          </p>
+        </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border p-2 mb-3 rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        {/* FORM */}
+        <form onSubmit={handleLogin} className="px-6 py-6">
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address
+            </label>
+            <input
+              type="email"
+              placeholder="admin@example.com"
+              className="
+                w-full border border-gray-300 rounded-md px-3 py-2
+                focus:outline-none focus:ring-2 focus:ring-indigo-500
+              "
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full border p-2 mb-4 rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              className="
+                w-full border border-gray-300 rounded-md px-3 py-2
+                focus:outline-none focus:ring-2 focus:ring-indigo-500
+              "
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Login
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="
+              w-full bg-indigo-600 text-white py-2 rounded-md
+              font-medium tracking-wide
+              hover:bg-indigo-700 transition
+            "
+          >
+            Sign In
+          </button>
+        </form>
+
+        {/* FOOTER */}
+        <div className="border-t px-6 py-3 text-center text-xs text-gray-500">
+          © {new Date().getFullYear()} Admin System
+        </div>
+      </div>
     </div>
   );
 };

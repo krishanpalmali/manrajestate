@@ -32,7 +32,6 @@ const Header = () => {
     >
       {/* MAIN BAR */}
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-
         {/* LOGO SPACE */}
         <div className="w-32 hidden md:block" />
 
@@ -113,10 +112,30 @@ const Header = () => {
       {/* MOBILE MENU */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ${
-          menuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+          menuOpen ? "max-h-[520px] opacity-100" : "max-h-0 opacity-0"
         } bg-[#020617]`}
       >
         <div className="px-6 py-6 space-y-6">
+
+          {/* AVATAR SECTION (TOP) */}
+          {currentUser?._id && (
+            <Link
+              to="/profile"
+              onClick={() => setMenuOpen(false)}
+              className="flex flex-col items-center gap-2 pb-4 border-b border-white/10"
+            >
+              <img
+                src={currentUser.avatar || currentUser.photo || defaultAvatar}
+                alt="profile"
+                className="w-16 h-16 rounded-full object-cover border-2 border-emerald-400"
+              />
+              <span className="text-sm text-emerald-400 font-medium">
+                View Profile
+              </span>
+            </Link>
+          )}
+
+          {/* NAV LINKS */}
           {navLinks.map((item) => (
             <NavLink
               key={item.path}
@@ -128,8 +147,8 @@ const Header = () => {
             </NavLink>
           ))}
 
-          {/* Mobile Auth */}
-          {!currentUser?._id ? (
+          {/* AUTH BUTTONS (LOGGED OUT) */}
+          {!currentUser?._id && (
             <div className="flex gap-4 pt-4">
               <Link
                 to="/sign-in"
@@ -146,14 +165,6 @@ const Header = () => {
                 Sign Up
               </Link>
             </div>
-          ) : (
-            <Link
-              to="/profile"
-              onClick={() => setMenuOpen(false)}
-              className="block text-center text-emerald-400 font-semibold"
-            >
-              Go to Profile
-            </Link>
           )}
         </div>
       </div>
