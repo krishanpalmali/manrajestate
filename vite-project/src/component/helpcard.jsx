@@ -7,12 +7,14 @@ const HelpCard = () => {
   return (
     <div
       className="
-        absolute z-30
-        bottom-10 left-0 right-0 mx-auto
+        relative
+        mx-auto mt-6
         w-[92%] max-w-[360px]
 
-        md:top-1/2 md:right-20 md:left-auto md:bottom-auto
+        md:absolute md:z-30
+        md:top-1/2 md:right-20
         md:-translate-y-1/2
+        md:mt-0
 
         bg-white/95 backdrop-blur
         p-5 sm:p-6
@@ -56,7 +58,7 @@ const HelpCard = () => {
           transition-all
         "
       >
-        <span className="flex items-center gap-3 text-gray-900 font-semibold">
+        <span className="flex items-center gap-3 font-semibold">
           <FaHome className="text-emerald-600 text-lg" />
           I’m Buying
         </span>
@@ -71,18 +73,18 @@ const HelpCard = () => {
           px-4 py-3
           flex items-center justify-between
           rounded-xl
-          bg-gradient-to-r from-[#020617]/5 to-[#0F172A]/10
+          bg-gray-100
           border border-gray-300
-          hover:bg-[#0F172A]/10
+          hover:bg-gray-200
           hover:scale-[1.02]
           transition-all
         "
       >
-        <span className="flex items-center gap-3 text-gray-900 font-semibold">
-          <FaTag className="text-[#0F172A] text-lg" />
+        <span className="flex items-center gap-3 font-semibold">
+          <FaTag className="text-gray-800 text-lg" />
           I’m Selling
         </span>
-        <span className="text-[#0F172A] font-bold text-lg">→</span>
+        <span className="text-gray-800 font-bold text-lg">→</span>
       </button>
 
       {/* Divider */}

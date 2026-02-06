@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function ExploreProperties({ properties }) {
   const navigate = useNavigate();
 
-  // ❌ agar koi property nahi → section hide
+  // agar property nahi hai to section hide
   if (!properties || properties.length === 0) return null;
 
   return (
@@ -23,7 +23,6 @@ export default function ExploreProperties({ properties }) {
             </p>
           </div>
 
-          {/* 👉 ADD PROPERTY → SELL PAGE */}
           <button
             onClick={() => navigate("/sell")}
             className="mt-6 md:mt-0 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg flex items-center gap-2"
@@ -46,23 +45,22 @@ export default function ExploreProperties({ properties }) {
           </h2>
         </div>
 
-        {/* PROPERTY CARDS (ALL DATA) */}
+        {/* PROPERTY CARDS */}
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
           {properties.map((item) => (
             <div
               key={item._id}
-              onClick={() => navigate(`/property/${item._id}`)}
-              className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden cursor-pointer"
+              className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
             >
-              <div className="relative">
-                {item.image && (
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="h-56 w-full object-cover"
-                  />
-                )}
-              </div>
+              {/* IMAGE → BUY PAGE */}
+              {item.image && (
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="h-56 w-full object-cover cursor-pointer"
+                  onClick={() => navigate("/buy")}
+                />
+              )}
 
               <div className="p-5">
                 <h3 className="text-lg font-semibold">
@@ -78,10 +76,19 @@ export default function ExploreProperties({ properties }) {
                     ₹ {item.price}
                   </p>
                 )}
+
+                {/* VIEW DETAILS → BUY PAGE */}
+                <button
+                  onClick={() => navigate("/buy")}
+                  className="mt-4 w-full border border-red-600 text-red-600 py-2 rounded-lg hover:bg-red-600 hover:text-white transition"
+                >
+                  View Details
+                </button>
               </div>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );
