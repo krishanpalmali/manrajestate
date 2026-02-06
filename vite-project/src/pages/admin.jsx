@@ -109,7 +109,7 @@ const Admin = () => {
         🛠 Admin Dashboard
       </h1>
 
-      {/* ADD PROPERTY */}
+      {/* ADD PROPERTY BUTTON */}
       <div className="flex justify-center mb-8">
         <button
           onClick={() => navigate("/admin/add-property")}
@@ -133,7 +133,7 @@ const Admin = () => {
 
       {/* CHART */}
       <div className="bg-white p-6 rounded-xl shadow-lg mb-12">
-        <h2 className="text-xl font-semibold mb-4">📊 Buy vs Sell</h2>
+        <h2 className="text-xl font-semibold mb-4">📊 Buy vs Sell Requests</h2>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData}>
             <XAxis dataKey="name" />
@@ -144,8 +144,111 @@ const Admin = () => {
         </ResponsiveContainer>
       </div>
 
-      {/* TABLES */}
-      {/* Buy & Sell tables – same as your existing implementation */}
+      {/* BUY REQUESTS TABLE */}
+      <div className="bg-white p-5 rounded-xl shadow-lg mb-10">
+        <h2 className="text-2xl font-semibold text-green-600 mb-4">
+          🏠 Buy Requests
+        </h2>
+
+        <div className="overflow-x-auto">
+          <table className="w-full border rounded-lg">
+            <thead className="bg-green-50">
+              <tr>
+                <th className="border p-2">Name</th>
+                <th className="border p-2">Phone</th>
+                <th className="border p-2">Email</th>
+                <th className="border p-2">Budget</th>
+                <th className="border p-2">Location</th>
+                <th className="border p-2">Type</th>
+                <th className="border p-2">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {buyData.length ? (
+                buyData.map((item, i) => (
+                  <tr key={item._id} className={i % 2 === 0 ? "bg-gray-50" : ""}>
+                    <td className="border p-2">{item.name}</td>
+                    <td className="border p-2">{item.phone}</td>
+                    <td className="border p-2">{item.email || "-"}</td>
+                    <td className="border p-2 text-green-600 font-semibold">
+                      ₹ {item.budget}
+                    </td>
+                    <td className="border p-2">{item.location}</td>
+                    <td className="border p-2">{item.propertyType}</td>
+                    <td className="border p-2 text-center">
+                      <button
+                        onClick={() => deleteBuyRequest(item._id)}
+                        className="bg-red-500 text-white px-3 py-1 rounded"
+                      >
+                        🗑 Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="text-center p-6 text-gray-500">
+                    No Buy Requests Found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* SELL REQUESTS TABLE */}
+      <div className="bg-white p-5 rounded-xl shadow-lg">
+        <h2 className="text-2xl font-semibold text-blue-600 mb-4">
+          🏷 Sell Requests
+        </h2>
+
+        <div className="overflow-x-auto">
+          <table className="w-full border rounded-lg">
+            <thead className="bg-blue-50">
+              <tr>
+                <th className="border p-2">Name</th>
+                <th className="border p-2">Phone</th>
+                <th className="border p-2">Email</th>
+                <th className="border p-2">Property</th>
+                <th className="border p-2">Price</th>
+                <th className="border p-2">Location</th>
+                <th className="border p-2">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sellData.length ? (
+                sellData.map((item, i) => (
+                  <tr key={item._id} className={i % 2 === 0 ? "bg-gray-50" : ""}>
+                    <td className="border p-2">{item.name}</td>
+                    <td className="border p-2">{item.phone}</td>
+                    <td className="border p-2">{item.email || "-"}</td>
+                    <td className="border p-2">{item.propertyType}</td>
+                    <td className="border p-2 text-blue-600 font-semibold">
+                      ₹ {item.price}
+                    </td>
+                    <td className="border p-2">{item.location}</td>
+                    <td className="border p-2 text-center">
+                      <button
+                        onClick={() => deleteSellRequest(item._id)}
+                        className="bg-red-500 text-white px-3 py-1 rounded"
+                      >
+                        🗑 Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="text-center p-6 text-gray-500">
+                    No Sell Requests Found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
